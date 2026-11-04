@@ -1,0 +1,9 @@
+query_id,script,business_question,techniques,result_file
+Q01,queries/Q01.sql,MQ01,join;join3plus;group_by,evidence/query_results/Q01.csv
+Q02,queries/Q02.sql,MQ02,join;join3plus;group_by,evidence/query_results/Q02.csv
+Q03,queries/Q03.sql,MQ03,join,evidence/query_results/Q03.csv
+Q04,queries/Q04.sql,MQ04,join;join3plus;group_by;having,evidence/query_results/Q04.csv
+Q05,queries/Q05.sql,Proposed refinement of MQ03; group approval pending,subquery,evidence/query_results/Q05.csv
+Q06,queries/Q06.sql,Proposed compliance refinement; group approval pending,exists,evidence/query_results/Q06.csv
+Q07,queries/Q07.sql,Proposed refinement of MQ03; group approval pending,join;group_by;null_handling,evidence/query_results/Q07.csv
+Q08,queries/Q08.sql,Proposed refinement of MQ04; group approval pending,correlated;exists;other_nontrivial,evidence/query_results/Q08.csv

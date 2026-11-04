@@ -1,0 +1,6 @@
+-- Q02: Technician failure counts and inspected workload
+-- Mapping: MQ02
+-- Proposed techniques: join;join3plus;group_by
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

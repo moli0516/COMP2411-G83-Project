@@ -1,0 +1,6 @@
+-- INCOMPLETE: Quotation issue and acceptance
+-- Inputs: Request/quotation IDs, version, amount, decision date
+-- Required checks: Positive values; unique version; one accepted quotation; protect accepted scope.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

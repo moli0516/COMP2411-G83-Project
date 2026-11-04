@@ -1,0 +1,6 @@
+-- INCOMPLETE: Inspection and completion
+-- Inputs: Job/inspection IDs, inspector, round, criteria, completion date
+-- Required checks: Distinct eligible inspector; unique round/criterion; completion and overall result consistency.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

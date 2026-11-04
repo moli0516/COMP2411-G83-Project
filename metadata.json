@@ -1,0 +1,21 @@
+{
+  "group_id": "UNCONFIRMED_G083_OR_G084",
+  "canvas_group_name": "TODO_CONFIRM_CURRENT_CANVAS_GROUP_NAME",
+  "scenario_id": "D14-W08",
+  "stage": 2,
+  "team_size": 2,
+  "members": [
+    {
+      "name": "Tam King Yeung Oscar",
+      "student_id": "25074264d"
+    },
+    {
+      "name": "Kong Kit Hou",
+      "student_id": "25129757d"
+    }
+  ],
+  "dbms": "MySQL Community Server",
+  "dbms_version": "TODO_VERIFY_8.4.11",
+  "database_name": "TODO_CONFIRM_DATABASE_NAME",
+  "approval_reference": null
+}

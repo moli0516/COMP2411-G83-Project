@@ -1,0 +1,6 @@
+-- INCOMPLETE: Return and closure
+-- Inputs: Job/request IDs, return date and staff ID
+-- Required checks: Required return data; no job reopening; every request item received with CLOSED job.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

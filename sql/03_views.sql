@@ -1,0 +1,4 @@
+-- INCOMPLETE: define at least one useful view.
+-- Proposal: corrective-action follow-up with assignee and optional verifying manager.
+-- TODO: agree row meaning, joins, columns and null handling before implementing.
+-- Avoid multiplying action counts through shared incident links.

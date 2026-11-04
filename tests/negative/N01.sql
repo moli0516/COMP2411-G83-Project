@@ -1,0 +1,6 @@
+-- N01: Duplicate equipment serial
+-- INCOMPLETE: not an executed test.
+-- TODO: rule reference and exact fresh-seed prerequisites.
+-- TODO: expected MySQL error number or SQLSTATE.
+-- TODO: ONE expected-failure statement only.
+-- Document and capture before/after verification separately.

@@ -1,0 +1,16 @@
+-- INCOMPLETE: implement fictional seed data in valid FK order.
+-- Use stable IDs/dates. See docs/seed_coverage.md.
+-- No real customer, employee or credential records.
+
+-- TODO: Customer seed rows.
+-- TODO: Staff seed rows.
+-- TODO: Equipment seed rows.
+-- TODO: ServiceRequest seed rows.
+-- TODO: RequestItem seed rows.
+-- TODO: Quotation seed rows.
+-- TODO: ServiceJob seed rows.
+-- TODO: Inspection seed rows.
+-- TODO: InspectionResult seed rows.
+-- TODO: Incident seed rows.
+-- TODO: CorrectiveAction seed rows.
+-- TODO: IncidentCorrectiveAction seed rows.

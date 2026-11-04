@@ -1,0 +1,6 @@
+-- INCOMPLETE: Receipt and job creation
+-- Inputs: Request-item ID, technician ID, receipt date
+-- Required checks: Accepted quote; eligible technician; unique job; receipt and job changes atomic.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

@@ -1,0 +1,17 @@
+-- INCOMPLETE: comments only; not a working schema.
+-- Implement agreed dictionary, PK/FK, NOT NULL, UNIQUE, CHECK and referential actions.
+-- Use transactional tables for transaction evidence.
+-- Do not create/drop databases or disable FK checks.
+
+-- TODO: Customer table and constraints.
+-- TODO: Staff table and constraints.
+-- TODO: Equipment table and constraints.
+-- TODO: ServiceRequest table and constraints.
+-- TODO: RequestItem table and constraints.
+-- TODO: Quotation table and constraints.
+-- TODO: ServiceJob table and constraints.
+-- TODO: Inspection table and constraints.
+-- TODO: InspectionResult table and constraints.
+-- TODO: Incident table and constraints.
+-- TODO: CorrectiveAction table and constraints.
+-- TODO: IncidentCorrectiveAction table and constraints.

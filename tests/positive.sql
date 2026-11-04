@@ -1,0 +1,4 @@
+-- INCOMPLETE: no tests executed.
+-- TODO: labelled successful INSERT, UPDATE and permitted DELETE.
+-- TODO: ownership, quote, receipt, inspection, action and closure success cases.
+-- Each case: ID, rule, prerequisites, expected rows, operation, actual verification.

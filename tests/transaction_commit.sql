@@ -1,0 +1,4 @@
+-- INCOMPLETE: receipt commit demonstration.
+-- TODO: before-state SELECTs; explicit START TRANSACTION.
+-- TODO: update item receipt; insert related ServiceJob; explicit COMMIT.
+-- TODO: verify both changes persist. No DDL inside transaction.

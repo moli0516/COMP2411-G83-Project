@@ -1,0 +1,6 @@
+-- INCOMPLETE: Request registration
+-- Inputs: Customer/equipment IDs, fault description and date
+-- Required checks: Validate ownership and at least one distinct item; no partial request.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

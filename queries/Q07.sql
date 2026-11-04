@@ -1,0 +1,6 @@
+-- Q07: All technicians and unresolved assigned-action counts including zero
+-- Mapping: Proposed refinement of MQ03; group approval pending
+-- Proposed techniques: join;group_by;null_handling
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

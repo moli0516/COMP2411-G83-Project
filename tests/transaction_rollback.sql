@@ -1,0 +1,7 @@
+-- INCOMPLETE: receipt failure/rollback demonstration.
+-- TODO: before-state SELECTs; explicit START TRANSACTION.
+-- TODO: first successful data change, then a related expected failure.
+-- EXPECTED-ERROR BLOCK: TODO implement and document error/SQLSTATE.
+-- SAME-CONNECTION ROLLBACK / VERIFICATION BLOCK: TODO implement.
+-- If client stops at error, continue rollback block in the same connection.
+-- Verify restoration of the initial state; no DDL in transaction.

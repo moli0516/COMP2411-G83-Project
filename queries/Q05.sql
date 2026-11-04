@@ -1,0 +1,6 @@
+-- Q05: Outstanding actions above average overdue duration
+-- Mapping: Proposed refinement of MQ03; group approval pending
+-- Proposed techniques: subquery
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

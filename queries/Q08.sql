@@ -1,0 +1,6 @@
+-- Q08: Repeat repairs after an earlier closed job with first-round failure
+-- Mapping: Proposed refinement of MQ04; group approval pending
+-- Proposed techniques: correlated;exists;other_nontrivial
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

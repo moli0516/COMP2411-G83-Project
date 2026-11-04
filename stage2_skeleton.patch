@@ -1,0 +1,714 @@
+diff --git a/README.md b/README.md
+new file mode 100644
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,47 @@
++# Environment
++
++Stage 2 development skeleton only: no schema, data, query or test implementation is complete.
++Planned DBMS: MySQL Community Server 8.4.11. Verify the actual environment before release.
++Group identity is UNCONFIRMED: proposal G083; repository name contains G84.
++No application or HTTP API is required by this scaffold.
++
++# Build
++
++Prepare and select an empty disposable project database using the course setup procedure.
++Implement, then run sql/01_schema.sql through sql/04_indexes.sql in order.
++Currently these files contain comments only; running them does not build a database.
++Never include CREATE/DROP DATABASE, credentials or expected failures in construction scripts.
++
++# Queries
++
++Implement Q01-Q08 as eight distinct business SELECT statements.
++Execute on fresh seed data before mutation tests. Export matching CSVs with headers.
++Use fixed reporting dates and stable ordering when required. Export SQL NULL as \N.
++
++# Tests
++
++Implement positive, negative and transaction scripts. No tests have been executed.
++Start from fresh seed data unless exact prerequisites are documented.
++Run negative files independently, one expected-failure statement per file.
++Rollback demonstration: successful change, related failure, explicit ROLLBACK in the same connection,
++then verify restoration. Document autocommit and client execution blocks.
++
++# Limitations
++
++This is an incomplete skeleton, not a working system or submission-ready package.
++Validation queries alone do not guarantee prevention of arbitrary direct updates.
++Core implementation, design decisions and explanations remain the group's responsibility.
++
++# File inventory
++
++- sql/: required construction placeholders.
++- operations/: optional controlled workflow specifications.
++- queries/: required business query placeholders.
++- tests/: test implementation placeholders.
++- evidence/: exact CSV headers and proposed mappings, not executed evidence.
++- docs/: editable planning and deliverable outlines.
++- metadata.json: incomplete development metadata; confirm identity and actual environment.
++- ai_usage.md: skeleton assistance declaration; retain prior assistance history.
++
++Final release also requires report.pdf, signed contribution.pdf, presentation.pdf and real query CSVs.
++See docs/quick_start.md for packaging. Do not package the entire development repository blindly.
+diff --git a/metadata.json b/metadata.json
+new file mode 100644
+--- /dev/null
++++ b/metadata.json
+@@ -0,0 +1,21 @@
++{
++  "group_id": "UNCONFIRMED_G083_OR_G084",
++  "canvas_group_name": "TODO_CONFIRM_CURRENT_CANVAS_GROUP_NAME",
++  "scenario_id": "D14-W08",
++  "stage": 2,
++  "team_size": 2,
++  "members": [
++    {
++      "name": "Tam King Yeung Oscar",
++      "student_id": "25074264d"
++    },
++    {
++      "name": "Kong Kit Hou",
++      "student_id": "25129757d"
++    }
++  ],
++  "dbms": "MySQL Community Server",
++  "dbms_version": "TODO_VERIFY_8.4.11",
++  "database_name": "TODO_CONFIRM_DATABASE_NAME",
++  "approval_reference": null
++}
+diff --git a/ai_usage.md b/ai_usage.md
+new file mode 100644
+--- /dev/null
++++ b/ai_usage.md
+@@ -0,0 +1,25 @@
++# AI Usage Declaration - Development Draft
++
++Tool: Perplexity.
++Purpose: Generate repository scaffolding, TODO specifications and collaboration documentation.
++Affected files: All files introduced by the Stage 2 skeleton patch.
++Extent: AI generated the scaffold text, proposed operation/query/test plans and documentation outlines.
++No core SQL implementation or executed results are supplied by this patch.
++
++## Accepted or rejected assistance
++
++TODO: Record what the group actually retained, changed or rejected.
++
++## Human checking
++
++TODO: Record actual reviews and verification. Do not claim reviews or test passes not performed.
++
++## Earlier and subsequent assistance
++
++Preserve and integrate the truthful Stage 1 AI assistance history in the final declaration.
++This draft does not replace or negate that history. Record further Stage 2 assistance as it occurs.
++
++## Responsibility
++
++The group must author and verify its core implementation and report.
++Disclosure does not by itself establish compliance with course authorship rules.
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,9 @@
++.DS_Store
++.env
++.env.*
++!.env.example
++*.log
++.idea/
++.vscode/
++mysql-data/
++local-backups/
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,17 @@
++## Purpose and rule IDs
++
++## Files and seed records changed
++
++## Build / baseline refresh instructions
++
++## Tests actually executed and outcomes
++- [ ] No fabricated results
++- [ ] Before/after evidence recorded where applicable
++
++## Known limitations and AI assistance
++
++## Reviewer checklist
++- [ ] Reviewed SQL and documentation consistency
++- [ ] Rebuilt when schema/seed changed
++- [ ] Checked relevant positive and negative cases
++- [ ] Confirmed no credentials or real database records
+diff --git a/sql/01_schema.sql b/sql/01_schema.sql
+new file mode 100644
+--- /dev/null
++++ b/sql/01_schema.sql
+@@ -0,0 +1,17 @@
++-- INCOMPLETE: comments only; not a working schema.
++-- Implement agreed dictionary, PK/FK, NOT NULL, UNIQUE, CHECK and referential actions.
++-- Use transactional tables for transaction evidence.
++-- Do not create/drop databases or disable FK checks.
++
++-- TODO: Customer table and constraints.
++-- TODO: Staff table and constraints.
++-- TODO: Equipment table and constraints.
++-- TODO: ServiceRequest table and constraints.
++-- TODO: RequestItem table and constraints.
++-- TODO: Quotation table and constraints.
++-- TODO: ServiceJob table and constraints.
++-- TODO: Inspection table and constraints.
++-- TODO: InspectionResult table and constraints.
++-- TODO: Incident table and constraints.
++-- TODO: CorrectiveAction table and constraints.
++-- TODO: IncidentCorrectiveAction table and constraints.
+diff --git a/sql/02_data.sql b/sql/02_data.sql
+new file mode 100644
+--- /dev/null
++++ b/sql/02_data.sql
+@@ -0,0 +1,16 @@
++-- INCOMPLETE: implement fictional seed data in valid FK order.
++-- Use stable IDs/dates. See docs/seed_coverage.md.
++-- No real customer, employee or credential records.
++
++-- TODO: Customer seed rows.
++-- TODO: Staff seed rows.
++-- TODO: Equipment seed rows.
++-- TODO: ServiceRequest seed rows.
++-- TODO: RequestItem seed rows.
++-- TODO: Quotation seed rows.
++-- TODO: ServiceJob seed rows.
++-- TODO: Inspection seed rows.
++-- TODO: InspectionResult seed rows.
++-- TODO: Incident seed rows.
++-- TODO: CorrectiveAction seed rows.
++-- TODO: IncidentCorrectiveAction seed rows.
+diff --git a/sql/03_views.sql b/sql/03_views.sql
+new file mode 100644
+--- /dev/null
++++ b/sql/03_views.sql
+@@ -0,0 +1,4 @@
++-- INCOMPLETE: define at least one useful view.
++-- Proposal: corrective-action follow-up with assignee and optional verifying manager.
++-- TODO: agree row meaning, joins, columns and null handling before implementing.
++-- Avoid multiplying action counts through shared incident links.
+diff --git a/sql/04_indexes.sql b/sql/04_indexes.sql
+new file mode 100644
+--- /dev/null
++++ b/sql/04_indexes.sql
+@@ -0,0 +1,4 @@
++-- INCOMPLETE: select a representative Query ID.
++-- TODO: create an appropriate index OR identify and justify an existing index.
++-- Explain indexed columns, selectivity, expected benefit, storage and maintenance.
++-- No measured speedup is claimed.
+diff --git a/operations/README.md b/operations/README.md
+new file mode 100644
+--- /dev/null
++++ b/operations/README.md
+@@ -0,0 +1,8 @@
++# Controlled operations
++
++These optional development scripts specify workflows; they are not implemented.
++Define inputs, validation, related writes, transaction boundaries and verification.
++Document when a manual operator must stop after failed validation.
++Do not claim that a detection SELECT automatically blocks later writes.
++Required executable success and failure evidence belongs in the tests as well.
++Agree allowed transitions, return eligibility and update/delete behavior before coding.
+diff --git a/operations/01_request_registration.sql b/operations/01_request_registration.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/01_request_registration.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Request registration
++-- Inputs: Customer/equipment IDs, fault description and date
++-- Required checks: Validate ownership and at least one distinct item; no partial request.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/operations/02_quotation_acceptance.sql b/operations/02_quotation_acceptance.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/02_quotation_acceptance.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Quotation issue and acceptance
++-- Inputs: Request/quotation IDs, version, amount, decision date
++-- Required checks: Positive values; unique version; one accepted quotation; protect accepted scope.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/operations/03_receive_item.sql b/operations/03_receive_item.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/03_receive_item.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Receipt and job creation
++-- Inputs: Request-item ID, technician ID, receipt date
++-- Required checks: Accepted quote; eligible technician; unique job; receipt and job changes atomic.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/operations/04_inspection.sql b/operations/04_inspection.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/04_inspection.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Inspection and completion
++-- Inputs: Job/inspection IDs, inspector, round, criteria, completion date
++-- Required checks: Distinct eligible inspector; unique round/criterion; completion and overall result consistency.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/operations/05_incident_corrective_action.sql b/operations/05_incident_corrective_action.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/05_incident_corrective_action.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Incident and corrective actions
++-- Inputs: Job, reporter, severity, action, assignee, resolution and verification data
++-- Required checks: Medium/high incident action coverage at commit; resolution details; manager verification; shared links.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/operations/06_return_and_closure.sql b/operations/06_return_and_closure.sql
+new file mode 100644
+--- /dev/null
++++ b/operations/06_return_and_closure.sql
+@@ -0,0 +1,6 @@
++-- INCOMPLETE: Return and closure
++-- Inputs: Job/request IDs, return date and staff ID
++-- Required checks: Required return data; no job reopening; every request item received with CLOSED job.
++-- TODO: validation mechanism and failure behavior.
++-- TODO: group-authored writes and transaction boundary.
++-- TODO: verification queries and test references.
+diff --git a/queries/Q01.sql b/queries/Q01.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q01.sql
+@@ -0,0 +1,6 @@
++-- Q01: First-round failure rate by hardware type
++-- Mapping: MQ01
++-- Proposed techniques: join;join3plus;group_by
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q02.sql b/queries/Q02.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q02.sql
+@@ -0,0 +1,6 @@
++-- Q02: Technician failure counts and inspected workload
++-- Mapping: MQ02
++-- Proposed techniques: join;join3plus;group_by
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q03.sql b/queries/Q03.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q03.sql
+@@ -0,0 +1,6 @@
++-- Q03: Overdue unverified corrective actions at a fixed reporting date
++-- Mapping: MQ03
++-- Proposed techniques: join
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q04.sql b/queries/Q04.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q04.sql
+@@ -0,0 +1,6 @@
++-- Q04: Equipment received for repair more than once
++-- Mapping: MQ04
++-- Proposed techniques: join;join3plus;group_by;having
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q05.sql b/queries/Q05.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q05.sql
+@@ -0,0 +1,6 @@
++-- Q05: Outstanding actions above average overdue duration
++-- Mapping: Proposed refinement of MQ03; group approval pending
++-- Proposed techniques: subquery
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q06.sql b/queries/Q06.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q06.sql
+@@ -0,0 +1,6 @@
++-- Q06: Medium/high incidents without action links
++-- Mapping: Proposed compliance refinement; group approval pending
++-- Proposed techniques: exists
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q07.sql b/queries/Q07.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q07.sql
+@@ -0,0 +1,6 @@
++-- Q07: All technicians and unresolved assigned-action counts including zero
++-- Mapping: Proposed refinement of MQ03; group approval pending
++-- Proposed techniques: join;group_by;null_handling
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/queries/Q08.sql b/queries/Q08.sql
+new file mode 100644
+--- /dev/null
++++ b/queries/Q08.sql
+@@ -0,0 +1,6 @@
++-- Q08: Repeat repairs after an earlier closed job with first-round failure
++-- Mapping: Proposed refinement of MQ04; group approval pending
++-- Proposed techniques: correlated;exists;other_nontrivial
++-- INCOMPLETE: no SELECT implementation.
++-- TODO: fixed parameters, row meaning, null behavior and expected result.
++-- TODO: author one business SELECT; add ORDER BY if order matters.
+diff --git a/evidence/query_map.csv b/evidence/query_map.csv
+new file mode 100644
+--- /dev/null
++++ b/evidence/query_map.csv
+@@ -0,0 +1,9 @@
++query_id,script,business_question,techniques,result_file
++Q01,queries/Q01.sql,MQ01,join;join3plus;group_by,evidence/query_results/Q01.csv
++Q02,queries/Q02.sql,MQ02,join;join3plus;group_by,evidence/query_results/Q02.csv
++Q03,queries/Q03.sql,MQ03,join,evidence/query_results/Q03.csv
++Q04,queries/Q04.sql,MQ04,join;join3plus;group_by;having,evidence/query_results/Q04.csv
++Q05,queries/Q05.sql,Proposed refinement of MQ03; group approval pending,subquery,evidence/query_results/Q05.csv
++Q06,queries/Q06.sql,Proposed compliance refinement; group approval pending,exists,evidence/query_results/Q06.csv
++Q07,queries/Q07.sql,Proposed refinement of MQ03; group approval pending,join;group_by;null_handling,evidence/query_results/Q07.csv
++Q08,queries/Q08.sql,Proposed refinement of MQ04; group approval pending,correlated;exists;other_nontrivial,evidence/query_results/Q08.csv
+diff --git a/evidence/test_cases.csv b/evidence/test_cases.csv
+new file mode 100644
+--- /dev/null
++++ b/evidence/test_cases.csv
+@@ -0,0 +1,1 @@
++test_id,requirement,script,initial_state,expected_result,expected_error,actual_result,status
+diff --git a/evidence/query_results/.gitkeep b/evidence/query_results/.gitkeep
+new file mode 100644
+--- /dev/null
++++ b/evidence/query_results/.gitkeep
+diff --git a/tests/positive.sql b/tests/positive.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/positive.sql
+@@ -0,0 +1,4 @@
++-- INCOMPLETE: no tests executed.
++-- TODO: labelled successful INSERT, UPDATE and permitted DELETE.
++-- TODO: ownership, quote, receipt, inspection, action and closure success cases.
++-- Each case: ID, rule, prerequisites, expected rows, operation, actual verification.
+diff --git a/tests/transaction_commit.sql b/tests/transaction_commit.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/transaction_commit.sql
+@@ -0,0 +1,4 @@
++-- INCOMPLETE: receipt commit demonstration.
++-- TODO: before-state SELECTs; explicit START TRANSACTION.
++-- TODO: update item receipt; insert related ServiceJob; explicit COMMIT.
++-- TODO: verify both changes persist. No DDL inside transaction.
+diff --git a/tests/transaction_rollback.sql b/tests/transaction_rollback.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/transaction_rollback.sql
+@@ -0,0 +1,7 @@
++-- INCOMPLETE: receipt failure/rollback demonstration.
++-- TODO: before-state SELECTs; explicit START TRANSACTION.
++-- TODO: first successful data change, then a related expected failure.
++-- EXPECTED-ERROR BLOCK: TODO implement and document error/SQLSTATE.
++-- SAME-CONNECTION ROLLBACK / VERIFICATION BLOCK: TODO implement.
++-- If client stops at error, continue rollback block in the same connection.
++-- Verify restoration of the initial state; no DDL in transaction.
+diff --git a/tests/negative/N01.sql b/tests/negative/N01.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N01.sql
+@@ -0,0 +1,6 @@
++-- N01: Duplicate equipment serial
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/tests/negative/N02.sql b/tests/negative/N02.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N02.sql
+@@ -0,0 +1,6 @@
++-- N02: Invalid foreign-key reference
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/tests/negative/N03.sql b/tests/negative/N03.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N03.sql
+@@ -0,0 +1,6 @@
++-- N03: Invalid quotation amount
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/tests/negative/N04.sql b/tests/negative/N04.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N04.sql
+@@ -0,0 +1,6 @@
++-- N04: Duplicate job for a request item
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/tests/negative/N05.sql b/tests/negative/N05.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N05.sql
+@@ -0,0 +1,6 @@
++-- N05: Invalid inspection-result domain value
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/tests/negative/N06.sql b/tests/negative/N06.sql
+new file mode 100644
+--- /dev/null
++++ b/tests/negative/N06.sql
+@@ -0,0 +1,6 @@
++-- N06: Inconsistent corrective-action state fields
++-- INCOMPLETE: not an executed test.
++-- TODO: rule reference and exact fresh-seed prerequisites.
++-- TODO: expected MySQL error number or SQLSTATE.
++-- TODO: ONE expected-failure statement only.
++-- Document and capture before/after verification separately.
+diff --git a/docs/work_plan.md b/docs/work_plan.md
+new file mode 100644
+--- /dev/null
++++ b/docs/work_plan.md
+@@ -0,0 +1,12 @@
++# Three workstreams - proposed allocation
++
++A: Oscar leads schema, intake, quotation, receipt and transaction evidence; Kong reviews.
++B: Kong leads inspection, incident/action, verification, return/closure and tests; Oscar reviews.
++C: Shared analytics/evidence/release. Oscar Q01-Q04 and index; Kong Q05-Q08 and view.
++Both review the complete database, author substantive work and rehearse the live task.
++Allocation is a proposal, not a completed-contribution claim.
++
++## Milestones
++4-6 Nov: environment/schema. 7-10: working workflow. 11-14: data/queries.
++15-18: evidence/testing. 19-21: documentation. 22-23: rebuild/release.
++Handoffs identify commit, rule IDs, seed changes and actual test outcomes.
+diff --git a/docs/architecture.md b/docs/architecture.md
+new file mode 100644
+--- /dev/null
++++ b/docs/architecture.md
+@@ -0,0 +1,17 @@
++# Architecture
++
++SQL-first: DBeaver -> MySQL; tracked construction/operation/query/test scripts -> evidence.
++Each developer uses a separate database, built from the same committed schema and seed.
++Alternative: separate desktop-hosted development databases, not concurrent mutation of one baseline.
++Maintain a local presentation database. No web app/classes/REST server are required.
++
++## Modules
++Intake: Customer, Equipment, ServiceRequest, RequestItem, Quotation.
++Repair/quality: Staff, ServiceJob, Inspection, InspectionResult.
++Incident/action: Incident, CorrectiveAction, IncidentCorrectiveAction.
++Analytics: read-only queries and useful views.
++
++## Integrity
++Structural constraints plus documented controlled SQL operations.
++Detection is not prevention. Document direct-update limitations and update/delete paths.
++The final ER model, dictionary and SQL must agree.
+diff --git a/docs/operation_contracts.md b/docs/operation_contracts.md
+new file mode 100644
+--- /dev/null
++++ b/docs/operation_contracts.md
+@@ -0,0 +1,32 @@
++# Operation contracts - pending implementation
++
++## Request registration
++Inputs: Customer/equipment IDs, fault description and date.
++Checks: Validate ownership and at least one distinct item; no partial request.
++TODO: transaction, output, rejection mechanism and tests.
++
++## Quotation issue and acceptance
++Inputs: Request/quotation IDs, version, amount, decision date.
++Checks: Positive values; unique version; one accepted quotation; protect accepted scope.
++TODO: transaction, output, rejection mechanism and tests.
++
++## Receipt and job creation
++Inputs: Request-item ID, technician ID, receipt date.
++Checks: Accepted quote; eligible technician; unique job; receipt and job changes atomic.
++TODO: transaction, output, rejection mechanism and tests.
++
++## Inspection and completion
++Inputs: Job/inspection IDs, inspector, round, criteria, completion date.
++Checks: Distinct eligible inspector; unique round/criterion; completion and overall result consistency.
++TODO: transaction, output, rejection mechanism and tests.
++
++## Incident and corrective actions
++Inputs: Job, reporter, severity, action, assignee, resolution and verification data.
++Checks: Medium/high incident action coverage at commit; resolution details; manager verification; shared links.
++TODO: transaction, output, rejection mechanism and tests.
++
++## Return and closure
++Inputs: Job/request IDs, return date and staff ID.
++Checks: Required return data; no job reopening; every request item received with CLOSED job.
++TODO: transaction, output, rejection mechanism and tests.
++
+diff --git a/docs/github_workflow.md b/docs/github_workflow.md
+new file mode 100644
+--- /dev/null
++++ b/docs/github_workflow.md
+@@ -0,0 +1,26 @@
++# GitHub workflow
++
++Use a private repository for development where appropriate; this patch changes no repository settings.
++Do not commit passwords, tokens, real records or database storage directories.
++
++## Start
++With a clean working tree:
++```sh
++git switch main
++git pull --ff-only origin main
++git switch -c feature/your-task
++```
++
++## Commit and review
++Review git diff, stage explicit paths, inspect git diff --cached, commit, then:
++```sh
++git push -u origin feature/your-task
++```
++Open a PR. The other member checks relevant SQL, rebuilds and tests before approval.
++Keep main buildable; no force-push to main. Resolve conflicts together and retest.
++Agree one coordinator at a time for shared schema/seed edits.
++
++## Data
++Git shares files, not live database changes. Promote durable data into reviewed seed SQL.
++Do not rerun non-idempotent seed SQL over populated data. Preserve local work before resets.
++Rebuild only a known disposable development database using the documented setup procedure.
+diff --git a/docs/quick_start.md b/docs/quick_start.md
+new file mode 100644
+--- /dev/null
++++ b/docs/quick_start.md
+@@ -0,0 +1,22 @@
++# Quick start
++
++1. Confirm G083 versus G084 and current Canvas name; fix metadata before release.
++2. Verify MySQL 8.4.11 and DBeaver using the course setup guide.
++3. Clone repository; select a personal empty disposable project database.
++4. Author schema and seed files. Current comment-only SQL is not a working build.
++5. Build 01_schema -> 02_data -> 03_views -> 04_indexes.
++6. Implement one complete repair workflow before expanding data and queries.
++7. Run Q01-Q08 on fresh seed; export real CSVs, headers and SQL NULL as \N.
++8. Implement/run tests; record real results and rollback restoration.
++9. Another member independently rebuilds solely from README instructions.
++
++## Release
++Deadline: 23 November 2026, 23:55 HKT.
++Archive: COMP2411_2026_Gxxx_Stage2.zip, with exactly one matching top-level directory.
++Replace Gxxx with the confirmed Group ID.
++Required: metadata.json, README.md, report.pdf, contribution.pdf with signatures,
++ai_usage.md, presentation.pdf, sql/, queries/, tests/ and evidence/.
++Exclude .git, caches, editor dependencies and database binaries.
++No PDF or query-output placeholders count as final evidence.
++Presentation: four prepared minutes plus two live-task minutes; both participate.
++AI/chat/remote assistance is prohibited during assessment. Bring a working local database.
+diff --git a/docs/change_log.md b/docs/change_log.md
+new file mode 100644
+--- /dev/null
++++ b/docs/change_log.md
+@@ -0,0 +1,7 @@
++# Stage 1 to Stage 2 change log
++
++Baseline: preserve the proposal actually submitted; do not overwrite it.
++| Date | Previous design | Change | Reason | Files/rules/tests | Author/reviewer |
++|---|---|---|---|---|---|
++
++TODO: record actual adopted changes; do not invent completed reviews.
+diff --git a/docs/seed_coverage.md b/docs/seed_coverage.md
+new file mode 100644
+--- /dev/null
++++ b/docs/seed_coverage.md
+@@ -0,0 +1,16 @@
++# Fictional seed coverage checklist
++
++- [ ] Customers/equipment with meaningful relationships
++- [ ] Multi-item request and undelivered item
++- [ ] Quote revisions and accepted quotation
++- [ ] Equipment with one versus repeated received repair
++- [ ] First-round PASS and FAIL; later successful reinspection
++- [ ] Legitimate null completion, return and verification fields
++- [ ] OPEN/IN_PROGRESS/RESOLVED/VERIFIED actions
++- [ ] Shared action linked to incidents across jobs
++- [ ] Staff with zero matching jobs/actions
++- [ ] HAVING groups retained and rejected
++- [ ] Subquery matching/non-matching cases
++- [ ] Fixed dates and known expected row sets
++
++Use deterministic fictional IDs. Agree fixture ownership. Counts alone are not coverage.
+diff --git a/docs/report_outline.md b/docs/report_outline.md
+new file mode 100644
+--- /dev/null
++++ b/docs/report_outline.md
+@@ -0,0 +1,16 @@
++# Final report outline - not a submission PDF
++
++1. Identity, registered scope, fingerprint and final rules
++2. Final ER overview/details, schema and data dictionary
++3. Candidate keys, FDs and normalization summary
++4. Stage 1 change log
++5. Implemented constraints, controlled operations and limitations
++6. Test setup, expected/actual results and important before/after evidence
++7. At least two findings linked to management questions, query IDs and actual CSV output
++8. View and index rationale, storage/maintenance trade-offs
++9. Reproducibility summary and external sources
++10. Acknowledgements
++
++Course Section 10 specifies acknowledging Prof. Yuawqv Fuimfct once for project scenarios.
++Preserve that spelling. Do not claim measured speedups or causal findings without evidence.
++Export actual completed content to report.pdf at release.
+diff --git a/docs/contribution_template.md b/docs/contribution_template.md
+new file mode 100644
+--- /dev/null
++++ b/docs/contribution_template.md
+@@ -0,0 +1,13 @@
++# Contribution declaration draft
++
++For each member list actual responsibilities, relevant files/tasks and one category:
++Equal, Major, Minor or No Contribution. Record disagreement explicitly.
++
++## Tam King Yeung Oscar
++TODO: actual work, files, category, signature and date.
++
++## Kong Kit Hou
++TODO: actual work, files, category, signature and date.
++
++Signatures acknowledge reading, not necessarily agreement.
++Do not prefill signatures or claims. Export the completed signed declaration to contribution.pdf.
+diff --git a/docs/presentation_outline.md b/docs/presentation_outline.md
+new file mode 100644
+--- /dev/null
++++ b/docs/presentation_outline.md
+@@ -0,0 +1,11 @@
++# Presentation outline - proposed
++
++Title: confirmed Group ID, full current Canvas name, scenario and member details.
++Prepared portion: four minutes including live SQL, not slides only.
++- Scope and one important design choice
++- Representative query and correct interpretation
++- Transaction or important constraint with before/after evidence
++Live task: two minutes; both members ready to operate and explain taught SQL.
++Use submitted presentation.pdf and a working local database.
++Check current Canvas slot and arrive at least ten minutes early.
++No AI, messaging or remote assistance during assessment.

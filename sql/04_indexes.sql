@@ -1,0 +1,4 @@
+-- INCOMPLETE: select a representative Query ID.
+-- TODO: create an appropriate index OR identify and justify an existing index.
+-- Explain indexed columns, selectivity, expected benefit, storage and maintenance.
+-- No measured speedup is claimed.

@@ -1,0 +1,6 @@
+-- Q04: Equipment received for repair more than once
+-- Mapping: MQ04
+-- Proposed techniques: join;join3plus;group_by;having
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

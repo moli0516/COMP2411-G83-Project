@@ -1,0 +1,6 @@
+-- INCOMPLETE: Incident and corrective actions
+-- Inputs: Job, reporter, severity, action, assignee, resolution and verification data
+-- Required checks: Medium/high incident action coverage at commit; resolution details; manager verification; shared links.
+-- TODO: validation mechanism and failure behavior.
+-- TODO: group-authored writes and transaction boundary.
+-- TODO: verification queries and test references.

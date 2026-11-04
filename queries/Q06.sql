@@ -1,0 +1,6 @@
+-- Q06: Medium/high incidents without action links
+-- Mapping: Proposed compliance refinement; group approval pending
+-- Proposed techniques: exists
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.

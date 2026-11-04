@@ -1,0 +1,6 @@
+-- Q01: First-round failure rate by hardware type
+-- Mapping: MQ01
+-- Proposed techniques: join;join3plus;group_by
+-- INCOMPLETE: no SELECT implementation.
+-- TODO: fixed parameters, row meaning, null behavior and expected result.
+-- TODO: author one business SELECT; add ORDER BY if order matters.
