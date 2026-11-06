@@ -7,3 +7,5 @@
 .vscode/
 mysql-data/
 local-backups/
+.old
+.venv

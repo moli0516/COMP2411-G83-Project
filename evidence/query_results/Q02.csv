@@ -1,0 +1,8 @@
+technician_id,technician_name,inspected_jobs,inspected_failures,failure_percentage
+4,Synthetic Staff 04,11,5,45.4545
+7,Synthetic Staff 07,10,4,40.0000
+3,Synthetic Staff 03,10,5,50.0000
+6,Synthetic Staff 06,10,4,40.0000
+2,Synthetic Staff 02,10,4,40.0000
+5,Synthetic Staff 05,10,4,40.0000
+1,Synthetic Staff 01,10,4,40.0000
