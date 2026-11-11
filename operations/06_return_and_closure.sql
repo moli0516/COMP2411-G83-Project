@@ -1,6 +1,7 @@
--- INCOMPLETE: Return and closure
--- Inputs: Job/request IDs, return date and staff ID
--- Required checks: Required return data; no job reopening; every request item received with CLOSED job.
--- TODO: validation mechanism and failure behavior.
--- TODO: group-authored writes and transaction boundary.
--- TODO: verification queries and test references.
+-- Inputs: job_id, returned_date, returned_by_staff_id
+-- READY_FOR_RETURN is an explicit operation policy; review with your group.
+SELECT EXISTS(SELECT 1 FROM ServiceJob j WHERE j.job_id=%(job_id)s AND j.job_status='READY_FOR_RETURN' AND j.returned_date IS NULL AND j.returned_by_staff_id IS NULL AND %(returned_date)s>=j.received_date AND %(returned_date)s>=j.repair_completed_date AND EXISTS(SELECT 1 FROM Inspection i WHERE i.job_id=j.job_id AND i.inspection_status='COMPLETED' AND i.overall_result='PASS' AND i.inspection_date<=%(returned_date)s AND NOT EXISTS(SELECT 1 FROM Inspection newer WHERE newer.job_id=i.job_id AND newer.inspection_round>i.inspection_round))) AND EXISTS(SELECT 1 FROM Staff WHERE staff_id=%(returned_by_staff_id)s AND active_status=1) AS ok;
+SELECT ri.request_id INTO @op_request_id FROM RequestItem ri JOIN ServiceJob j ON j.request_item_id=ri.request_item_id WHERE j.job_id=%(job_id)s;
+UPDATE ServiceJob SET job_status='CLOSED',returned_date=%(returned_date)s,returned_by_staff_id=%(returned_by_staff_id)s WHERE job_id=%(job_id)s;
+UPDATE ServiceRequest r SET r.request_status='CLOSED' WHERE r.request_id=@op_request_id AND EXISTS(SELECT 1 FROM RequestItem ri WHERE ri.request_id=r.request_id) AND NOT EXISTS(SELECT 1 FROM RequestItem ri LEFT JOIN ServiceJob j ON j.request_item_id=ri.request_item_id WHERE ri.request_id=r.request_id AND (ri.item_status<>'RECEIVED' OR j.job_id IS NULL OR j.job_status<>'CLOSED'));
+SELECT j.job_id,j.job_status,j.returned_date,r.request_id,r.request_status FROM ServiceJob j JOIN RequestItem ri ON ri.request_item_id=j.request_item_id JOIN ServiceRequest r ON r.request_id=ri.request_id WHERE j.job_id=%(job_id)s;
