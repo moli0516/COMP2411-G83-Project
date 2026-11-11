@@ -1,0 +1,100 @@
+{
+  "target": "comp2411_test",
+  "host": "127.0.0.1",
+  "port": 3306,
+  "created": true,
+  "files": [
+    {
+      "file": "01_schema.sql",
+      "sha256": "db63be03c9e4533d3098cc8376e6307125f57cc13254488152f3f96339a7eaab",
+      "completed_statements": 12,
+      "current_statement": 12
+    },
+    {
+      "file": "02_data.sql",
+      "sha256": "8f5729189d539c6be91da9a9df4e3c855f4e6141020b2265014570e4c2dffaf5",
+      "completed_statements": 20,
+      "current_statement": 20
+    },
+    {
+      "file": "03_views.sql",
+      "sha256": "20fa610737a30522d5bde3c177f86ca1572f35a9c47fb5b420d5c7284e768b03",
+      "completed_statements": 3,
+      "current_statement": 3
+    },
+    {
+      "file": "04_indexes.sql",
+      "sha256": "bad9e36d964a9dcc8fb1ff5833c871784c25faa70de1e5f49c3d893fafb3ab5d",
+      "completed_statements": 1,
+      "current_statement": 1
+    }
+  ],
+  "environment": [
+    "comp2411_test",
+    "8.4.11",
+    3306
+  ],
+  "objects": [
+    [
+      "CorrectiveAction",
+      "BASE TABLE"
+    ],
+    [
+      "Customer",
+      "BASE TABLE"
+    ],
+    [
+      "Equipment",
+      "BASE TABLE"
+    ],
+    [
+      "Incident",
+      "BASE TABLE"
+    ],
+    [
+      "IncidentCorrectiveAction",
+      "BASE TABLE"
+    ],
+    [
+      "Inspection",
+      "BASE TABLE"
+    ],
+    [
+      "InspectionResult",
+      "BASE TABLE"
+    ],
+    [
+      "Quotation",
+      "BASE TABLE"
+    ],
+    [
+      "RequestItem",
+      "BASE TABLE"
+    ],
+    [
+      "ServiceJob",
+      "BASE TABLE"
+    ],
+    [
+      "ServiceRequest",
+      "BASE TABLE"
+    ],
+    [
+      "Staff",
+      "BASE TABLE"
+    ],
+    [
+      "vw_corrective_action_followup",
+      "VIEW"
+    ],
+    [
+      "vw_equipment_repair_history",
+      "VIEW"
+    ],
+    [
+      "vw_first_round_inspection",
+      "VIEW"
+    ]
+  ],
+  "status": "PASS"
+}

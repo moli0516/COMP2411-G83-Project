@@ -1,0 +1,519 @@
+{
+  "version": 1,
+  "scripts": [
+    {
+      "path": "positive.sql",
+      "description": "positive.sql",
+      "cases": [
+        {
+          "test_id": "POS01",
+          "requirement": "Register owned equipment in a non-empty request",
+          "initial_state": "Dedicated test DB with current schema/seed; script creates its own committed or transactional fixture",
+          "expected_result": "matching_owned_items=1"
+        },
+        {
+          "test_id": "POS02",
+          "requirement": "Issue quotation and update request",
+          "initial_state": "Dedicated test DB with current schema/seed; script creates its own committed or transactional fixture",
+          "expected_result": "matching_quoted_requests=1"
+        },
+        {
+          "test_id": "POS03",
+          "requirement": "Delete unaccepted synthetic request and dependencies",
+          "initial_state": "Dedicated test DB with current schema/seed; script creates its own committed or transactional fixture",
+          "expected_result": "All absence checks pass"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "transaction_commit.sql",
+      "description": "transaction commit.sql",
+      "cases": [
+        {
+          "test_id": "TXC01",
+          "requirement": "Commit hardware receipt",
+          "initial_state": "Dedicated test DB with current schema/seed; script creates its own committed or transactional fixture",
+          "expected_result": "Request IN_PROGRESS; item RECEIVED; one matching job persists"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "transaction_rollback.sql",
+      "description": "transaction rollback.sql",
+      "cases": [
+        {
+          "test_id": "TXR01",
+          "requirement": "Rollback receipt after duplicate job failure",
+          "initial_state": "Dedicated test DB with current schema/seed; script creates its own committed or transactional fixture",
+          "expected_result": "1062/23000; request ACCEPTED; item AWAITING_DELIVERY; no job"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\s+ServiceJob\\b",
+          "occurrence": 2,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N01.sql",
+      "mode": "negative",
+      "description": "Duplicate equipment serial",
+      "cases": [
+        {
+          "test_id": "N01",
+          "requirement": "Duplicate equipment serial",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N02.sql",
+      "mode": "negative",
+      "description": "Invalid equipment customer reference",
+      "cases": [
+        {
+          "test_id": "N02",
+          "requirement": "Invalid equipment customer reference",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1452/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1452,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N03.sql",
+      "mode": "negative",
+      "description": "Required equipment serial cannot be NULL",
+      "cases": [
+        {
+          "test_id": "N03",
+          "requirement": "Required equipment serial cannot be NULL",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1048/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1048,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N04.sql",
+      "mode": "negative",
+      "description": "Invalid equipment component domain",
+      "cases": [
+        {
+          "test_id": "N04",
+          "requirement": "Invalid equipment component domain",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (3819/HY000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N05.sql",
+      "mode": "negative",
+      "description": "Duplicate equipment within request",
+      "cases": [
+        {
+          "test_id": "N05",
+          "requirement": "Duplicate equipment within request",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N06.sql",
+      "mode": "negative",
+      "description": "Quotation amount must be positive",
+      "cases": [
+        {
+          "test_id": "N06",
+          "requirement": "Quotation amount must be positive",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (3819/HY000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N07.sql",
+      "mode": "negative",
+      "description": "Duplicate quotation version",
+      "cases": [
+        {
+          "test_id": "N07",
+          "requirement": "Duplicate quotation version",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N08.sql",
+      "mode": "negative",
+      "description": "At most one job per request item",
+      "cases": [
+        {
+          "test_id": "N08",
+          "requirement": "At most one job per request item",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N09.sql",
+      "mode": "negative",
+      "description": "Duplicate inspection round",
+      "cases": [
+        {
+          "test_id": "N09",
+          "requirement": "Duplicate inspection round",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N10.sql",
+      "mode": "negative",
+      "description": "Duplicate inspection criterion",
+      "cases": [
+        {
+          "test_id": "N10",
+          "requirement": "Duplicate inspection criterion",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (1062/23000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N11.sql",
+      "mode": "negative",
+      "description": "Invalid inspection result domain",
+      "cases": [
+        {
+          "test_id": "N11",
+          "requirement": "Invalid inspection result domain",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (3819/HY000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N12.sql",
+      "mode": "negative",
+      "description": "Corrective action due date cannot precede creation",
+      "cases": [
+        {
+          "test_id": "N12",
+          "requirement": "Corrective action due date cannot precede creation",
+          "initial_state": "Transactional synthetic fixture from negative_setup_sql; no hard-coded seed IDs",
+          "expected_result": "Exactly one rejected INSERT (3819/HY000); all table counts unchanged; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W01.sql",
+      "mode": "workflow",
+      "description": "Reject equipment owned by another customer",
+      "operation": "08_add_request_item.sql",
+      "parameters_sql": "SELECT @wr AS request_id,@we_other AS equipment_id",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W01",
+          "requirement": "Reject equipment owned by another customer",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W02.sql",
+      "mode": "workflow",
+      "description": "Reject receipt before quotation acceptance",
+      "operation": "03_receive_item.sql",
+      "parameters_sql": "SELECT @wi AS request_item_id,@wt AS technician_id,'2026-10-31' AS received_date",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W02",
+          "requirement": "Reject receipt before quotation acceptance",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W03.sql",
+      "mode": "workflow",
+      "description": "Reject adding hardware after acceptance",
+      "operation": "08_add_request_item.sql",
+      "parameters_sql": "SELECT @wr AS request_id,@we_extra AS equipment_id",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W03",
+          "requirement": "Reject adding hardware after acceptance",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W04.sql",
+      "mode": "workflow",
+      "description": "Reject quotation issuance after acceptance",
+      "operation": "07_issue_quotation.sql",
+      "parameters_sql": "SELECT @wr AS request_id,'2026-10-31' AS quotation_date,600.00 AS quoted_amount",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W04",
+          "requirement": "Reject quotation issuance after acceptance",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W05.sql",
+      "mode": "workflow",
+      "description": "Reject responsible technician as inspector",
+      "operation": "04_inspection.sql",
+      "parameters_sql": "SELECT @wj AS job_id,@wt AS inspector_id,'2026-10-31' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'WF' AS remarks",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W05",
+          "requirement": "Reject responsible technician as inspector",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W06.sql",
+      "mode": "workflow",
+      "description": "Reject verification by a non-manager",
+      "operation": "12_verify_action.sql",
+      "parameters_sql": "SELECT @wa AS action_id,@wt AS manager_id,'2026-10-31' AS verified_date",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W06",
+          "requirement": "Reject verification by a non-manager",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W07.sql",
+      "mode": "workflow",
+      "description": "Return job while undelivered item prevents request closure",
+      "operation": "06_return_and_closure.sql",
+      "parameters_sql": "SELECT @wj AS job_id,'2026-10-31' AS returned_date,@wm AS returned_by_staff_id",
+      "expected_outcome": "success",
+      "verification_sql": "SELECT IF((SELECT job_status FROM ServiceJob WHERE job_id=@wj)='CLOSED' AND (SELECT returned_date FROM ServiceJob WHERE job_id=@wj)='2026-10-31' AND (SELECT returned_by_staff_id FROM ServiceJob WHERE job_id=@wj)=@wm AND (SELECT request_status FROM ServiceRequest WHERE request_id=@wr)='IN_PROGRESS' AND (SELECT COUNT(*) FROM RequestItem WHERE request_id=@wr AND item_status='AWAITING_DELIVERY')=1,'PASS','FAIL') AS result",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W07",
+          "requirement": "Return job while undelivered item prevents request closure",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "Operation succeeds and postcondition returns PASS; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W08.sql",
+      "mode": "workflow",
+      "description": "Reject CLOSED job repair resubmission",
+      "operation": "09_submit_repair.sql",
+      "parameters_sql": "SELECT @wj AS job_id,'2026-10-31' AS repair_completed_date,'Reopen attempt' AS repair_description",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W08",
+          "requirement": "Reject CLOSED job repair resubmission",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W09.sql",
+      "mode": "workflow",
+      "description": "Reject sole NOT_APPLICABLE inspection result",
+      "operation": "04_inspection.sql",
+      "parameters_sql": "SELECT @wj AS job_id,@ws AS inspector_id,'2026-10-31' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'NOT_APPLICABLE' AS result,'WF' AS remarks",
+      "expected_outcome": "reject",
+      "verification_sql": null,
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W09",
+          "requirement": "Reject sole NOT_APPLICABLE inspection result",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "ValidationRejected; full data snapshot unchanged; rollback restores baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/W10.sql",
+      "mode": "workflow",
+      "description": "FAIL criterion produces completed FAIL and REWORK_REQUIRED",
+      "operation": "04_inspection.sql",
+      "parameters_sql": "SELECT @wj AS job_id,@ws AS inspector_id,'2026-10-31' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'FAIL' AS result,'WF' AS remarks",
+      "expected_outcome": "success",
+      "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=@wj AND inspection_status='COMPLETED' AND overall_result='FAIL' AND inspection_date='2026-10-31')=1 AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=@wj AND ir.result='FAIL')=1 AND (SELECT job_status FROM ServiceJob WHERE job_id=@wj)='REWORK_REQUIRED','PASS','FAIL') AS result",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "W10",
+          "requirement": "FAIL criterion produces completed FAIL and REWORK_REQUIRED",
+          "initial_state": "Transactional synthetic fixture in workflow SQL; isolated DB with no concurrent writers",
+          "expected_result": "Operation succeeds and postcondition returns PASS; rollback restores baseline"
+        }
+      ]
+    }
+  ],
+  "negative_setup_sql": [
+    "INSERT INTO Customer(customer_name,phone) VALUES ('NEG synthetic customer','0000000000')",
+    "SET @nc = LAST_INSERT_ID()",
+    "INSERT INTO Equipment(customer_id,component_type,brand,model,serial_no,physical_condition,accessories) VALUES (@nc,'GPU','TEST','NEG',CONCAT('NEG-',UUID()),'Synthetic intact','NONE')",
+    "SET @ne = LAST_INSERT_ID()",
+    "INSERT INTO ServiceRequest(customer_id,request_date,fault_description) VALUES (@nc,'2026-10-30','NEG fixture')",
+    "SET @nr = LAST_INSERT_ID()",
+    "INSERT INTO RequestItem(request_id,equipment_id) VALUES (@nr,@ne)",
+    "SET @ni = LAST_INSERT_ID()",
+    "INSERT INTO Staff(staff_name,role) VALUES ('NEG technician','TECHNICIAN')",
+    "SET @nt = LAST_INSERT_ID()",
+    "INSERT INTO Staff(staff_name,role) VALUES ('NEG inspector','INSPECTOR')",
+    "SET @ns = LAST_INSERT_ID()",
+    "INSERT INTO Quotation(request_id,quotation_version,quoted_amount,quotation_date,quotation_status,customer_decision_date) VALUES (@nr,1,500,'2026-10-30','ACCEPTED','2026-10-30')",
+    "UPDATE ServiceRequest SET request_status='ACCEPTED' WHERE request_id=@nr",
+    "UPDATE RequestItem SET item_status='RECEIVED' WHERE request_item_id=@ni",
+    "INSERT INTO ServiceJob(request_item_id,technician_id,received_date) VALUES (@ni,@nt,'2026-10-31')",
+    "SET @nj = LAST_INSERT_ID()",
+    "UPDATE ServiceRequest SET request_status='IN_PROGRESS' WHERE request_id=@nr",
+    "INSERT INTO Inspection(job_id,inspector_id,inspection_round) VALUES (@nj,@ns,1)",
+    "SET @nx=LAST_INSERT_ID()",
+    "INSERT INTO InspectionResult(inspection_id,criterion_name,result) VALUES (@nx,'POWER_ON','PASS')",
+    "SET @missing_customer=(SELECT COALESCE(MAX(customer_id),0)+1 FROM Customer)"
+  ]
+}

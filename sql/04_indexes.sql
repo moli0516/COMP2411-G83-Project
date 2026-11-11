@@ -1,4 +1,77 @@
--- INCOMPLETE: select a representative Query ID.
--- TODO: create an appropriate index OR identify and justify an existing index.
--- Explain indexed columns, selectivity, expected benefit, storage and maintenance.
+-- ============================================================
+-- COMP2411 Stage 2
+-- 04_indexes.sql
+--
+-- Strategy:
+-- 1. Add one date-range index for Q03 and Q05.
+-- 2. Reuse existing PK, UNIQUE and FK-supporting indexes.
+-- 3. Avoid redundant indexes without execution-plan evidence.
+--
+-- Run once after:
+--   01_schema.sql
+--   02_data.sql
+--   03_views.sql
+-- ============================================================
+
+
+-- ------------------------------------------------------------
+-- Additional index
+-- Primary target: Q03
+-- Secondary target: Q05
+--
+-- Both queries filter the overdue action population using:
+--
+--     due_date < '2026-10-31'
+--     AND action_status <> 'VERIFIED'
+--
+-- Expected benefit:
+-- A due_date index can support locating the overdue date range.
+-- action_status must still be checked to exclude VERIFIED rows.
+--
+-- The benefit depends on how many rows satisfy the date filter.
+-- A small table or a large matching population may still lead
+-- the optimiser to choose a full table scan.
+--
+-- Costs:
+-- Additional secondary-index storage.
+-- Maintenance during INSERT and DELETE.
+-- Maintenance when due_date is updated.
+--
+-- This index does not guarantee elimination of query sorting.
 -- No measured speedup is claimed.
+-- ------------------------------------------------------------
+
+CREATE INDEX idx_corrective_action_due_date
+    ON CorrectiveAction (due_date);
+
+
+-- ------------------------------------------------------------
+-- Existing index justification
+-- Target: Q08
+--
+-- Existing UNIQUE index:
+--     Inspection(job_id, inspection_round)
+--
+-- Defined by the UNIQUE constraint in 01_schema.sql.
+--
+-- Q08 locates an earlier job's first-round inspection using:
+--
+--     i.job_id = earlier_job.job_id
+--     AND i.inspection_round = 1
+--
+-- The index supports lookup using both columns and ensures
+-- that each job has at most one inspection for a given round.
+--
+-- Completion status and overall_result are checked after
+-- locating the matching inspection.
+--
+-- Supporting existing lookup paths should also include:
+--     RequestItem(equipment_id)
+--     ServiceJob(request_item_id) UNIQUE
+--
+-- These must be verified against the actual schema.
+-- Do not create duplicate indexes when suitable ones exist.
+--
+-- The existing indexes consume storage and require maintenance
+-- during relevant data changes. No duplicate index is added.
+-- ------------------------------------------------------------
