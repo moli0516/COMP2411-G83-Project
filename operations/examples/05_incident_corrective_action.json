@@ -1,0 +1,11 @@
+{
+  "job_id": 0,
+  "reporter_id": 10,
+  "incident_date": "2026-10-31",
+  "incident_type": "QUALITY_ISSUE",
+  "severity": "HIGH",
+  "incident_description": "Synthetic follow-up issue.",
+  "assigned_staff_id": 1,
+  "action_description": "Review and retest.",
+  "due_date": "2026-11-10"
+}

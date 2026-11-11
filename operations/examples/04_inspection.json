@@ -1,0 +1,8 @@
+{
+  "job_id": 0,
+  "inspector_id": 10,
+  "inspection_date": "2026-10-31",
+  "criterion_name": "FUNCTION_TEST",
+  "result": "PASS",
+  "remarks": "Synthetic test."
+}

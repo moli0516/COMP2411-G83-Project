@@ -1,0 +1,6 @@
+{
+  "customer_id": 1,
+  "equipment_id": 1,
+  "request_date": "2026-10-31",
+  "fault_description": "Synthetic intermittent power failure."
+}

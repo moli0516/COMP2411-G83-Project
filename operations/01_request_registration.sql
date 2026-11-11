@@ -1,6 +1,6 @@
--- INCOMPLETE: Request registration
--- Inputs: Customer/equipment IDs, fault description and date
--- Required checks: Validate ownership and at least one distinct item; no partial request.
--- TODO: validation mechanism and failure behavior.
--- TODO: group-authored writes and transaction boundary.
--- TODO: verification queries and test references.
+-- Inputs: customer_id, equipment_id, request_date, fault_description
+SELECT EXISTS(SELECT 1 FROM Equipment WHERE equipment_id=%(equipment_id)s AND customer_id=%(customer_id)s) AND CHAR_LENGTH(TRIM(%(fault_description)s))>0 AS ok;
+INSERT INTO ServiceRequest(customer_id,request_date,fault_description,request_status) VALUES (%(customer_id)s,%(request_date)s,%(fault_description)s,'PENDING_QUOTATION');
+SET @op_request_id=LAST_INSERT_ID();
+INSERT INTO RequestItem(request_id,equipment_id,item_status) VALUES (@op_request_id,%(equipment_id)s,'AWAITING_DELIVERY');
+SELECT @op_request_id AS request_id, LAST_INSERT_ID() AS request_item_id;

@@ -1,7 +1,6 @@
 -- Q05: Corrective actions overdue longer than average
 -- Reporting date: 2026-10-31
 
-
 SELECT
     a.action_id,
     a.action_status,
