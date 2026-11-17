@@ -490,6 +490,1571 @@
           "expected_result": "Operation succeeds and postcondition returns PASS; rollback restores baseline"
         }
       ]
+    },
+    {
+      "path": "workflow/IA01.sql",
+      "mode": "workflow",
+      "description": "Create HIGH incident, OPEN action and link through real operation",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'IA synthetic action' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident i JOIN IncidentCorrectiveAction l ON l.incident_id=i.incident_id JOIN CorrectiveAction a ON a.action_id=l.action_id WHERE i.incident_id=@op_incident_id AND i.job_id=@ij AND i.severity='HIGH' AND i.incident_status='OPEN' AND a.action_id=@op_action_id AND a.assigned_staff_id=@it AND a.action_status='OPEN' AND a.created_date='2026-10-30' AND a.due_date='2026-10-31' AND a.resolved_date IS NULL AND a.resolution_note IS NULL AND a.verified_by_manager_id IS NULL AND a.verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA01",
+          "requirement": "Create HIGH incident, OPEN action and link through real operation",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Each real operation succeeds and every step postcondition passes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA02.sql",
+      "mode": "workflow",
+      "description": "Rollback incident inserted before corrective-action constraint failure",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'   ' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "error",
+          "expected_error": {
+            "errno": 3819,
+            "sqlstate": "HY000",
+            "message_contains": "chk_correctiveaction_description_nonempty"
+          },
+          "failure_verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident WHERE job_id=@ij)=1 AND (SELECT COUNT(*) FROM CorrectiveAction WHERE assigned_staff_id=@it)=0 AND (SELECT COUNT(*) FROM IncidentCorrectiveAction l JOIN Incident i ON i.incident_id=l.incident_id WHERE i.job_id=@ij)=0,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA02",
+          "requirement": "Rollback incident inserted before corrective-action constraint failure",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Validation passes; incident exists when action INSERT fails with 3819/HY000; rollback removes all partial operation writes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\s+CorrectiveAction\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/IA03.sql",
+      "mode": "workflow",
+      "description": "Verify OPEN to IN_PROGRESS to RESOLVED to VERIFIED lifecycle",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'IA synthetic action' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident i JOIN IncidentCorrectiveAction l ON l.incident_id=i.incident_id JOIN CorrectiveAction a ON a.action_id=l.action_id WHERE i.incident_id=@op_incident_id AND i.job_id=@ij AND i.severity='HIGH' AND i.incident_status='OPEN' AND a.action_id=@op_action_id AND a.assigned_staff_id=@it AND a.action_status='OPEN' AND a.created_date='2026-10-30' AND a.due_date='2026-10-31' AND a.resolved_date IS NULL AND a.resolution_note IS NULL AND a.verified_by_manager_id IS NULL AND a.verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "10_start_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='IN_PROGRESS' AND resolved_date IS NULL AND resolution_note IS NULL AND verified_by_manager_id IS NULL AND verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "11_resolve_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id,'2026-10-30' AS resolved_date,'IA repair procedure corrected' AS resolution_note",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='RESOLVED' AND resolved_date='2026-10-30' AND resolution_note='IA repair procedure corrected' AND verified_by_manager_id IS NULL AND verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id,@im AS manager_id,'2026-10-31' AS verified_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='VERIFIED' AND assigned_staff_id=@it AND resolved_date='2026-10-30' AND resolution_note='IA repair procedure corrected' AND verified_by_manager_id=@im AND verified_date='2026-10-31')=1 AND (SELECT COUNT(*) FROM IncidentCorrectiveAction WHERE incident_id=@op_incident_id AND action_id=@op_action_id)=1,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA03",
+          "requirement": "Verify OPEN to IN_PROGRESS to RESOLVED to VERIFIED lifecycle",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Each real operation succeeds and every step postcondition passes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA04.sql",
+      "mode": "workflow",
+      "description": "Reject verification of OPEN action",
+      "cases": [
+        {
+          "test_id": "IA04",
+          "requirement": "Reject verification of OPEN action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "12_verify_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,@iam AS manager_id,'2026-10-31' AS verified_date",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "workflow/IA05.sql",
+      "mode": "workflow",
+      "description": "Reject verification of IN_PROGRESS action",
+      "cases": [
+        {
+          "test_id": "IA05",
+          "requirement": "Reject verification of IN_PROGRESS action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "12_verify_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,@iam AS manager_id,'2026-10-31' AS verified_date",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "workflow/IA06.sql",
+      "mode": "workflow",
+      "description": "Reject re-resolution of VERIFIED action",
+      "cases": [
+        {
+          "test_id": "IA06",
+          "requirement": "Reject re-resolution of VERIFIED action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "11_resolve_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,'2026-10-31' AS resolved_date,'Attempt reversal' AS resolution_note",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "negative/N13.sql",
+      "mode": "negative",
+      "description": "RESOLVED requires resolved_date",
+      "cases": [
+        {
+          "test_id": "N13",
+          "requirement": "RESOLVED requires resolved_date",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N14.sql",
+      "mode": "negative",
+      "description": "RESOLVED requires resolution_note",
+      "cases": [
+        {
+          "test_id": "N14",
+          "requirement": "RESOLVED requires resolution_note",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N15.sql",
+      "mode": "negative",
+      "description": "VERIFIED requires verifying staff",
+      "cases": [
+        {
+          "test_id": "N15",
+          "requirement": "VERIFIED requires verifying staff",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N16.sql",
+      "mode": "negative",
+      "description": "VERIFIED requires verified_date",
+      "cases": [
+        {
+          "test_id": "N16",
+          "requirement": "VERIFIED requires verified_date",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/IA07.sql",
+      "mode": "sql",
+      "description": "Accept legal OPEN and RESOLVED NULL field combinations",
+      "cases": [
+        {
+          "test_id": "IA07",
+          "requirement": "Accept legal OPEN and RESOLVED NULL field combinations",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Verification returns PASS; rollback restores fixture baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA08.sql",
+      "mode": "sql",
+      "description": "Support shared action across jobs and multiple actions per incident",
+      "cases": [
+        {
+          "test_id": "IA08",
+          "requirement": "Support shared action across jobs and multiple actions per incident",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Verification returns PASS; rollback restores fixture baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "negative/N17.sql",
+      "mode": "negative",
+      "description": "Reject duplicate incident/action link",
+      "cases": [
+        {
+          "test_id": "N17",
+          "requirement": "Reject duplicate incident/action link",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Given at least one existing seeded link, 1062/23000; full data snapshot unchanged; cleanup restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF01.sql",
+      "mode": "workflow",
+      "description": "Issue, revise and accept quotation while retaining both versions",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-22' AS quotation_date,650.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=2 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quoted_amount=650.00 AND quotation_date='2026-10-22' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='REVISED' AND customer_decision_date IS NULL)=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=2) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='REVISED' AND customer_decision_date IS NULL)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quoted_amount=650.00)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=2,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF01",
+          "requirement": "Issue, revise and accept quotation while retaining both versions",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF02.sql",
+      "mode": "workflow",
+      "description": "Accepted quotation then legal receipt through actual operations",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF02",
+          "requirement": "Accepted quotation then legal receipt through actual operations",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF03.sql",
+      "mode": "workflow",
+      "description": "Different eligible inspector completes PASS and makes job ready",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF03",
+          "requirement": "Different eligible inspector completes PASS and makes job ready",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF04.sql",
+      "mode": "workflow",
+      "description": "FAIL then rework and round-two PASS retains round-one history",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'FAIL' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='FAIL' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='REWORK_REQUIRED' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='FAIL')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-26' AS repair_completed_date,'PF rework correction' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-26' AND repair_description='PF rework correction')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-27' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=2 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-27')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=2 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=2 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND overall_result='FAIL' AND inspection_status='COMPLETED' AND inspection_date='2026-10-25' AND inspector_id=@pfi)=1 AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='FAIL')=1,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF04",
+          "requirement": "FAIL then rework and round-two PASS retains round-one history",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF05.sql",
+      "mode": "workflow",
+      "description": "Multi-item first return stays open; final return closes request",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem2 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem2)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem2)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_status"
+        },
+        {
+          "operation": "06_return_and_closure.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-28' AS returned_date,@pfm AS returned_by_staff_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='CLOSED' AND returned_date='2026-10-28' AND returned_by_staff_id=@pfm)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS' AND (SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='READY_FOR_RETURN' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "06_return_and_closure.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,'2026-10-29' AS returned_date,@pfm AS returned_by_staff_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='CLOSED' AND returned_date='2026-10-29' AND returned_by_staff_id=@pfm)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='CLOSED' AND (SELECT COUNT(*) FROM RequestItem WHERE request_id=@pfr AND item_status='RECEIVED')=2 AND (SELECT COUNT(*) FROM ServiceJob j JOIN RequestItem ri ON ri.request_item_id=j.request_item_id WHERE ri.request_id=@pfr AND j.job_status='CLOSED' AND j.returned_date IS NOT NULL AND j.returned_by_staff_id=@pfm)=2,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF05",
+          "requirement": "Multi-item first return stays open; final return closes request",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT01.sql",
+      "mode": "sql",
+      "description": "Negative quotation amount rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Quotation\\ SET\\ quoted_amount=\\-0\\.01\\ WHERE\\ quotation_id=@btq;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT01",
+          "requirement": "Negative quotation amount rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT02.sql",
+      "mode": "sql",
+      "description": "Quotation version zero rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Quotation\\ SET\\ quotation_version=0\\ WHERE\\ quotation_id=@btq;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT02",
+          "requirement": "Quotation version zero rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT03.sql",
+      "mode": "sql",
+      "description": "Inspection round zero rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ inspection_round=0\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT03",
+          "requirement": "Inspection round zero rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT04.sql",
+      "mode": "sql",
+      "description": "Action due date equal to created date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT04",
+          "requirement": "Action due date equal to created date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT05.sql",
+      "mode": "sql",
+      "description": "IN_PROGRESS inspection accepts NULL final fields",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT05",
+          "requirement": "IN_PROGRESS inspection accepts NULL final fields",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT06.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing date rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ inspection_date=NULL,inspection_status='COMPLETED',overall_result='PASS'\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT06",
+          "requirement": "COMPLETED inspection missing date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT07.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing overall result rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ overall_result=NULL,inspection_status='COMPLETED',inspection_date='2026\\-10\\-23'\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT07",
+          "requirement": "COMPLETED inspection missing overall result rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT08.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing both final values rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ overall_result=NULL,inspection_status='COMPLETED',inspection_date=NULL\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT08",
+          "requirement": "COMPLETED inspection missing both final values rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT09.sql",
+      "mode": "sql",
+      "description": "Not-returned job accepts NULL return fields",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT09",
+          "requirement": "Not-returned job accepts NULL return fields",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT10.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing return date rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_date=NULL,job_status='CLOSED',returned_by_staff_id=@btm\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT10",
+          "requirement": "CLOSED job missing return date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT11.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing returning staff rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_by_staff_id=NULL,job_status='CLOSED',returned_date='2026\\-10\\-24'\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT11",
+          "requirement": "CLOSED job missing returning staff rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT12.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing both return fields rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_date=NULL,job_status='CLOSED',returned_by_staff_id=NULL\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT12",
+          "requirement": "CLOSED job missing both return fields rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB01E.sql",
+      "mode": "sql",
+      "description": "Customer.customer_name rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ customer_name=''\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB01E",
+          "requirement": "Customer.customer_name rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB01S.sql",
+      "mode": "sql",
+      "description": "Customer.customer_name rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ customer_name='\\ \\ \\ '\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB01S",
+          "requirement": "Customer.customer_name rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB02E.sql",
+      "mode": "sql",
+      "description": "Customer.phone rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ phone=''\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB02E",
+          "requirement": "Customer.phone rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB02S.sql",
+      "mode": "sql",
+      "description": "Customer.phone rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ phone='\\ \\ \\ '\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB02S",
+          "requirement": "Customer.phone rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB03E.sql",
+      "mode": "sql",
+      "description": "Staff.staff_name rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Staff\\ SET\\ staff_name=''\\ WHERE\\ staff_id=@btt;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB03E",
+          "requirement": "Staff.staff_name rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB03S.sql",
+      "mode": "sql",
+      "description": "Staff.staff_name rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Staff\\ SET\\ staff_name='\\ \\ \\ '\\ WHERE\\ staff_id=@btt;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB03S",
+          "requirement": "Staff.staff_name rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB04E.sql",
+      "mode": "sql",
+      "description": "Equipment.brand rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ brand=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB04E",
+          "requirement": "Equipment.brand rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB04S.sql",
+      "mode": "sql",
+      "description": "Equipment.brand rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ brand='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB04S",
+          "requirement": "Equipment.brand rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB05E.sql",
+      "mode": "sql",
+      "description": "Equipment.model rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ model=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB05E",
+          "requirement": "Equipment.model rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB05S.sql",
+      "mode": "sql",
+      "description": "Equipment.model rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ model='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB05S",
+          "requirement": "Equipment.model rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB06E.sql",
+      "mode": "sql",
+      "description": "Equipment.serial_no rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ serial_no=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB06E",
+          "requirement": "Equipment.serial_no rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB06S.sql",
+      "mode": "sql",
+      "description": "Equipment.serial_no rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ serial_no='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB06S",
+          "requirement": "Equipment.serial_no rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB07E.sql",
+      "mode": "sql",
+      "description": "Equipment.physical_condition rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ physical_condition=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB07E",
+          "requirement": "Equipment.physical_condition rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB07S.sql",
+      "mode": "sql",
+      "description": "Equipment.physical_condition rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ physical_condition='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB07S",
+          "requirement": "Equipment.physical_condition rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB08E.sql",
+      "mode": "sql",
+      "description": "Equipment.accessories rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ accessories=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB08E",
+          "requirement": "Equipment.accessories rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB08S.sql",
+      "mode": "sql",
+      "description": "Equipment.accessories rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ accessories='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB08S",
+          "requirement": "Equipment.accessories rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB09E.sql",
+      "mode": "sql",
+      "description": "ServiceRequest.fault_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceRequest\\ SET\\ fault_description=''\\ WHERE\\ request_id=@btr;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB09E",
+          "requirement": "ServiceRequest.fault_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB09S.sql",
+      "mode": "sql",
+      "description": "ServiceRequest.fault_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceRequest\\ SET\\ fault_description='\\ \\ \\ '\\ WHERE\\ request_id=@btr;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB09S",
+          "requirement": "ServiceRequest.fault_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB10E.sql",
+      "mode": "sql",
+      "description": "ServiceJob.repair_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ repair_description=''\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB10E",
+          "requirement": "ServiceJob.repair_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB10S.sql",
+      "mode": "sql",
+      "description": "ServiceJob.repair_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ repair_description='\\ \\ \\ '\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB10S",
+          "requirement": "ServiceJob.repair_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB11E.sql",
+      "mode": "sql",
+      "description": "Incident.incident_type rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_type=''\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB11E",
+          "requirement": "Incident.incident_type rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB11S.sql",
+      "mode": "sql",
+      "description": "Incident.incident_type rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_type='\\ \\ \\ '\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB11S",
+          "requirement": "Incident.incident_type rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB12E.sql",
+      "mode": "sql",
+      "description": "Incident.incident_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_description=''\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB12E",
+          "requirement": "Incident.incident_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB12S.sql",
+      "mode": "sql",
+      "description": "Incident.incident_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_description='\\ \\ \\ '\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB12S",
+          "requirement": "Incident.incident_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB13E.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.action_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ action_description=''\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB13E",
+          "requirement": "CorrectiveAction.action_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB13S.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.action_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ action_description='\\ \\ \\ '\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB13S",
+          "requirement": "CorrectiveAction.action_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB14E.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.resolution_note rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ resolution_note=''\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB14E",
+          "requirement": "CorrectiveAction.resolution_note rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB14S.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.resolution_note rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ resolution_note='\\ \\ \\ '\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB14S",
+          "requirement": "CorrectiveAction.resolution_note rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD01.sql",
+      "mode": "workflow",
+      "description": "Minimum positive amount 0.01 accepted by actual quotation operation",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD01",
+          "requirement": "Minimum positive amount 0.01 accepted by actual quotation operation",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @btr AS request_id,'2026-10-21' AS quotation_date,0.01 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@btr AND quotation_version=2 AND quoted_amount=0.01 AND quotation_status='PENDING')=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='QUOTED','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD02.sql",
+      "mode": "workflow",
+      "description": "Receipt on acceptance date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD02",
+          "requirement": "Receipt on acceptance date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-21' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@btri AND technician_id=@btt AND received_date='2026-10-21' AND job_status='RECEIVED')=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@btri)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='IN_PROGRESS','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD03.sql",
+      "mode": "workflow",
+      "description": "Receipt one day before acceptance rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD03",
+          "requirement": "Receipt one day before acceptance rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-20' AS received_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD04.sql",
+      "mode": "workflow",
+      "description": "Receipt on request date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD04",
+          "requirement": "Receipt on request date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-20' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@btri AND received_date='2026-10-20' AND job_status='RECEIVED')=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@btri)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='IN_PROGRESS','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD05.sql",
+      "mode": "workflow",
+      "description": "Receipt one day before request date rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD05",
+          "requirement": "Receipt one day before request date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-19' AS received_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD06.sql",
+      "mode": "workflow",
+      "description": "Inspection on repair completion date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD06",
+          "requirement": "Inspection on repair completion date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT @btj AS job_id,@bti AS inspector_id,'2026-10-23' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'Boundary date' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=@btj AND inspection_round=1 AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-23')=1 AND (SELECT job_status FROM ServiceJob WHERE job_id=@btj)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=@btj AND ir.result='PASS' AND ir.criterion_name='FUNCTION_TEST')=1,'PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD07.sql",
+      "mode": "workflow",
+      "description": "Inspection one day before repair completion rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD07",
+          "requirement": "Inspection one day before repair completion rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT @btj AS job_id,@bti AS inspector_id,'2026-10-22' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'Boundary date' AS remarks",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD08.sql",
+      "mode": "workflow",
+      "description": "Verification on resolution date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD08",
+          "requirement": "Verification on resolution date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @bta AS action_id,@btm AS manager_id,'2026-10-24' AS verified_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@bta AND action_status='VERIFIED' AND verified_date='2026-10-24' AND verified_by_manager_id=@btm AND resolved_date=verified_date)=1,'PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD09.sql",
+      "mode": "workflow",
+      "description": "Verification one day before resolution rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD09",
+          "requirement": "Verification one day before resolution rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @bta AS action_id,@btm AS manager_id,'2026-10-23' AS verified_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD10.sql",
+      "mode": "workflow",
+      "description": "Negative quotation amount rejected by operation validation",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD10",
+          "requirement": "Negative quotation amount rejected by operation validation",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @btr AS request_id,'2026-10-21' AS quotation_date,-0.01 AS quoted_amount",
+          "expected_outcome": "reject"
+        }
+      ]
     }
   ],
   "negative_setup_sql": [

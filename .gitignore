@@ -9,3 +9,5 @@ mysql-data/
 local-backups/
 .old
 .venv
+automated_runs/
+build_runs/

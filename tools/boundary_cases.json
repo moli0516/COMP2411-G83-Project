@@ -1,0 +1,1038 @@
+{
+  "scripts": [
+    {
+      "path": "boundary/BT01.sql",
+      "mode": "sql",
+      "description": "Negative quotation amount rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Quotation\\ SET\\ quoted_amount=\\-0\\.01\\ WHERE\\ quotation_id=@btq;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT01",
+          "requirement": "Negative quotation amount rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT02.sql",
+      "mode": "sql",
+      "description": "Quotation version zero rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Quotation\\ SET\\ quotation_version=0\\ WHERE\\ quotation_id=@btq;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT02",
+          "requirement": "Quotation version zero rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT03.sql",
+      "mode": "sql",
+      "description": "Inspection round zero rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ inspection_round=0\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT03",
+          "requirement": "Inspection round zero rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT04.sql",
+      "mode": "sql",
+      "description": "Action due date equal to created date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT04",
+          "requirement": "Action due date equal to created date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT05.sql",
+      "mode": "sql",
+      "description": "IN_PROGRESS inspection accepts NULL final fields",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT05",
+          "requirement": "IN_PROGRESS inspection accepts NULL final fields",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT06.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing date rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ inspection_date=NULL,inspection_status='COMPLETED',overall_result='PASS'\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT06",
+          "requirement": "COMPLETED inspection missing date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT07.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing overall result rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ overall_result=NULL,inspection_status='COMPLETED',inspection_date='2026\\-10\\-23'\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT07",
+          "requirement": "COMPLETED inspection missing overall result rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT08.sql",
+      "mode": "sql",
+      "description": "COMPLETED inspection missing both final values rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Inspection\\ SET\\ overall_result=NULL,inspection_status='COMPLETED',inspection_date=NULL\\ WHERE\\ inspection_id=@btins;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT08",
+          "requirement": "COMPLETED inspection missing both final values rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT09.sql",
+      "mode": "sql",
+      "description": "Not-returned job accepts NULL return fields",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BT09",
+          "requirement": "Not-returned job accepts NULL return fields",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT10.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing return date rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_date=NULL,job_status='CLOSED',returned_by_staff_id=@btm\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT10",
+          "requirement": "CLOSED job missing return date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT11.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing returning staff rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_by_staff_id=NULL,job_status='CLOSED',returned_date='2026\\-10\\-24'\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT11",
+          "requirement": "CLOSED job missing returning staff rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BT12.sql",
+      "mode": "sql",
+      "description": "CLOSED job missing both return fields rejected",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ returned_date=NULL,job_status='CLOSED',returned_by_staff_id=NULL\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BT12",
+          "requirement": "CLOSED job missing both return fields rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB01E.sql",
+      "mode": "sql",
+      "description": "Customer.customer_name rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ customer_name=''\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB01E",
+          "requirement": "Customer.customer_name rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB01S.sql",
+      "mode": "sql",
+      "description": "Customer.customer_name rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ customer_name='\\ \\ \\ '\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB01S",
+          "requirement": "Customer.customer_name rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB02E.sql",
+      "mode": "sql",
+      "description": "Customer.phone rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ phone=''\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB02E",
+          "requirement": "Customer.phone rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB02S.sql",
+      "mode": "sql",
+      "description": "Customer.phone rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Customer\\ SET\\ phone='\\ \\ \\ '\\ WHERE\\ customer_id=@btc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB02S",
+          "requirement": "Customer.phone rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB03E.sql",
+      "mode": "sql",
+      "description": "Staff.staff_name rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Staff\\ SET\\ staff_name=''\\ WHERE\\ staff_id=@btt;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB03E",
+          "requirement": "Staff.staff_name rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB03S.sql",
+      "mode": "sql",
+      "description": "Staff.staff_name rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Staff\\ SET\\ staff_name='\\ \\ \\ '\\ WHERE\\ staff_id=@btt;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB03S",
+          "requirement": "Staff.staff_name rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB04E.sql",
+      "mode": "sql",
+      "description": "Equipment.brand rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ brand=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB04E",
+          "requirement": "Equipment.brand rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB04S.sql",
+      "mode": "sql",
+      "description": "Equipment.brand rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ brand='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB04S",
+          "requirement": "Equipment.brand rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB05E.sql",
+      "mode": "sql",
+      "description": "Equipment.model rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ model=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB05E",
+          "requirement": "Equipment.model rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB05S.sql",
+      "mode": "sql",
+      "description": "Equipment.model rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ model='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB05S",
+          "requirement": "Equipment.model rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB06E.sql",
+      "mode": "sql",
+      "description": "Equipment.serial_no rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ serial_no=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB06E",
+          "requirement": "Equipment.serial_no rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB06S.sql",
+      "mode": "sql",
+      "description": "Equipment.serial_no rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ serial_no='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB06S",
+          "requirement": "Equipment.serial_no rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB07E.sql",
+      "mode": "sql",
+      "description": "Equipment.physical_condition rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ physical_condition=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB07E",
+          "requirement": "Equipment.physical_condition rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB07S.sql",
+      "mode": "sql",
+      "description": "Equipment.physical_condition rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ physical_condition='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB07S",
+          "requirement": "Equipment.physical_condition rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB08E.sql",
+      "mode": "sql",
+      "description": "Equipment.accessories rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ accessories=''\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB08E",
+          "requirement": "Equipment.accessories rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB08S.sql",
+      "mode": "sql",
+      "description": "Equipment.accessories rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Equipment\\ SET\\ accessories='\\ \\ \\ '\\ WHERE\\ equipment_id=@bte;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB08S",
+          "requirement": "Equipment.accessories rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB09E.sql",
+      "mode": "sql",
+      "description": "ServiceRequest.fault_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceRequest\\ SET\\ fault_description=''\\ WHERE\\ request_id=@btr;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB09E",
+          "requirement": "ServiceRequest.fault_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB09S.sql",
+      "mode": "sql",
+      "description": "ServiceRequest.fault_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceRequest\\ SET\\ fault_description='\\ \\ \\ '\\ WHERE\\ request_id=@btr;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB09S",
+          "requirement": "ServiceRequest.fault_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB10E.sql",
+      "mode": "sql",
+      "description": "ServiceJob.repair_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ repair_description=''\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB10E",
+          "requirement": "ServiceJob.repair_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB10S.sql",
+      "mode": "sql",
+      "description": "ServiceJob.repair_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ ServiceJob\\ SET\\ repair_description='\\ \\ \\ '\\ WHERE\\ job_id=@btj;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB10S",
+          "requirement": "ServiceJob.repair_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB11E.sql",
+      "mode": "sql",
+      "description": "Incident.incident_type rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_type=''\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB11E",
+          "requirement": "Incident.incident_type rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB11S.sql",
+      "mode": "sql",
+      "description": "Incident.incident_type rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_type='\\ \\ \\ '\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB11S",
+          "requirement": "Incident.incident_type rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB12E.sql",
+      "mode": "sql",
+      "description": "Incident.incident_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_description=''\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB12E",
+          "requirement": "Incident.incident_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB12S.sql",
+      "mode": "sql",
+      "description": "Incident.incident_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ Incident\\ SET\\ incident_description='\\ \\ \\ '\\ WHERE\\ incident_id=@btinc;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB12S",
+          "requirement": "Incident.incident_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB13E.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.action_description rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ action_description=''\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB13E",
+          "requirement": "CorrectiveAction.action_description rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB13S.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.action_description rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ action_description='\\ \\ \\ '\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB13S",
+          "requirement": "CorrectiveAction.action_description rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB14E.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.resolution_note rejects empty string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ resolution_note=''\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB14E",
+          "requirement": "CorrectiveAction.resolution_note rejects empty string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BB14S.sql",
+      "mode": "sql",
+      "description": "CorrectiveAction.resolution_note rejects space-only string",
+      "expected_errors": [
+        {
+          "statement_regex": "^UPDATE\\ CorrectiveAction\\ SET\\ resolution_note='\\ \\ \\ '\\ WHERE\\ action_id=@bta;?\\s*$",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "BB14S",
+          "requirement": "CorrectiveAction.resolution_note rejects space-only string",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "Expected rejection with unchanged target value; rollback removes fixtures"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD01.sql",
+      "mode": "workflow",
+      "description": "Minimum positive amount 0.01 accepted by actual quotation operation",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD01",
+          "requirement": "Minimum positive amount 0.01 accepted by actual quotation operation",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @btr AS request_id,'2026-10-21' AS quotation_date,0.01 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@btr AND quotation_version=2 AND quoted_amount=0.01 AND quotation_status='PENDING')=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='QUOTED','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD02.sql",
+      "mode": "workflow",
+      "description": "Receipt on acceptance date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD02",
+          "requirement": "Receipt on acceptance date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-21' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@btri AND technician_id=@btt AND received_date='2026-10-21' AND job_status='RECEIVED')=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@btri)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='IN_PROGRESS','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD03.sql",
+      "mode": "workflow",
+      "description": "Receipt one day before acceptance rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD03",
+          "requirement": "Receipt one day before acceptance rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-20' AS received_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD04.sql",
+      "mode": "workflow",
+      "description": "Receipt on request date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD04",
+          "requirement": "Receipt on request date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-20' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@btri AND received_date='2026-10-20' AND job_status='RECEIVED')=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@btri)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@btr)='IN_PROGRESS','PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD05.sql",
+      "mode": "workflow",
+      "description": "Receipt one day before request date rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD05",
+          "requirement": "Receipt one day before request date rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @btri AS request_item_id,@btt AS technician_id,'2026-10-19' AS received_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD06.sql",
+      "mode": "workflow",
+      "description": "Inspection on repair completion date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD06",
+          "requirement": "Inspection on repair completion date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT @btj AS job_id,@bti AS inspector_id,'2026-10-23' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'Boundary date' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=@btj AND inspection_round=1 AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-23')=1 AND (SELECT job_status FROM ServiceJob WHERE job_id=@btj)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=@btj AND ir.result='PASS' AND ir.criterion_name='FUNCTION_TEST')=1,'PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD07.sql",
+      "mode": "workflow",
+      "description": "Inspection one day before repair completion rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD07",
+          "requirement": "Inspection one day before repair completion rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT @btj AS job_id,@bti AS inspector_id,'2026-10-22' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'Boundary date' AS remarks",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD08.sql",
+      "mode": "workflow",
+      "description": "Verification on resolution date accepted",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD08",
+          "requirement": "Verification on resolution date accepted",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @bta AS action_id,@btm AS manager_id,'2026-10-24' AS verified_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@bta AND action_status='VERIFIED' AND verified_date='2026-10-24' AND verified_by_manager_id=@btm AND resolved_date=verified_date)=1,'PASS','FAIL') AS result"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD09.sql",
+      "mode": "workflow",
+      "description": "Verification one day before resolution rejected",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD09",
+          "requirement": "Verification one day before resolution rejected",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @bta AS action_id,@btm AS manager_id,'2026-10-23' AS verified_date",
+          "expected_outcome": "reject"
+        }
+      ]
+    },
+    {
+      "path": "boundary/BD10.sql",
+      "mode": "workflow",
+      "description": "Negative quotation amount rejected by operation validation",
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "BD10",
+          "requirement": "Negative quotation amount rejected by operation validation",
+          "initial_state": "Isolated synthetic fixture with valid references; fixed dates; no concurrent writers",
+          "expected_result": "All designated assertions PASS and rollback removes fixtures"
+        }
+      ],
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @btr AS request_id,'2026-10-21' AS quotation_date,-0.01 AS quoted_amount",
+          "expected_outcome": "reject"
+        }
+      ]
+    }
+  ]
+}

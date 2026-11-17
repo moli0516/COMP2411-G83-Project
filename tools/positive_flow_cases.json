@@ -1,0 +1,252 @@
+{
+  "scripts": [
+    {
+      "path": "workflow/PF01.sql",
+      "mode": "workflow",
+      "description": "Issue, revise and accept quotation while retaining both versions",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-22' AS quotation_date,650.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=2 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quoted_amount=650.00 AND quotation_date='2026-10-22' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='REVISED' AND customer_decision_date IS NULL)=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=2) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='REVISED' AND customer_decision_date IS NULL)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=2 AND quoted_amount=650.00)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=2,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF01",
+          "requirement": "Issue, revise and accept quotation while retaining both versions",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF02.sql",
+      "mode": "workflow",
+      "description": "Accepted quotation then legal receipt through actual operations",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF02",
+          "requirement": "Accepted quotation then legal receipt through actual operations",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF03.sql",
+      "mode": "workflow",
+      "description": "Different eligible inspector completes PASS and makes job ready",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF03",
+          "requirement": "Different eligible inspector completes PASS and makes job ready",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF04.sql",
+      "mode": "workflow",
+      "description": "FAIL then rework and round-two PASS retains round-one history",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'FAIL' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='FAIL' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='REWORK_REQUIRED' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='FAIL')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-26' AS repair_completed_date,'PF rework correction' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-26' AND repair_description='PF rework correction')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-27' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=2 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-27')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=2 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=2 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND overall_result='FAIL' AND inspection_status='COMPLETED' AND inspection_date='2026-10-25' AND inspector_id=@pfi)=1 AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='FAIL')=1,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF04",
+          "requirement": "FAIL then rework and round-two PASS retains round-one history",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    },
+    {
+      "path": "workflow/PF05.sql",
+      "mode": "workflow",
+      "description": "Multi-item first return stays open; final return closes request",
+      "steps": [
+        {
+          "operation": "07_issue_quotation.sql",
+          "parameters_sql": "SELECT @pfr AS request_id,'2026-10-21' AS quotation_date,500.00 AS quoted_amount",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr)=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quoted_amount=500.00 AND quotation_date='2026-10-21' AND quotation_status='PENDING' AND customer_decision_date IS NULL)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='QUOTED','PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status, (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr) AS quotation_count"
+        },
+        {
+          "operation": "02_quotation_acceptance.sql",
+          "parameters_sql": "SELECT (SELECT quotation_id FROM Quotation WHERE request_id=@pfr AND quotation_version=1) AS quotation_id,'2026-10-22' AS decision_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='ACCEPTED' AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_status='ACCEPTED')=1 AND (SELECT COUNT(*) FROM Quotation WHERE request_id=@pfr AND quotation_version=1 AND quotation_status='ACCEPTED' AND customer_decision_date='2026-10-22')=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem1 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem1)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "03_receive_item.sql",
+          "parameters_sql": "SELECT @pfitem2 AS request_item_id,@pft AS technician_id,'2026-10-23' AS received_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND technician_id=@pft AND received_date='2026-10-23' AND job_status='RECEIVED' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1 AND (SELECT item_status FROM RequestItem WHERE request_item_id=@pfitem2)='RECEIVED' AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS','PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_status"
+        },
+        {
+          "operation": "09_submit_repair.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,'2026-10-24' AS repair_completed_date,'PF initial repair' AS repair_description",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='SUBMITTED_FOR_INSPECTION' AND repair_completed_date='2026-10-24' AND repair_description='PF initial repair')=1,'PASS','FAIL') AS result, (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id"
+        },
+        {
+          "operation": "04_inspection.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,@pfi AS inspector_id,'2026-10-25' AS inspection_date,'FUNCTION_TEST' AS criterion_name,'PASS' AS result,'PF inspection' AS remarks",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AND inspection_round=1 AND inspector_id=@pfi AND inspection_status='COMPLETED' AND overall_result='PASS' AND inspection_date='2026-10-25')=1 AND (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2))=1 AND (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem2)='READY_FOR_RETURN' AND (SELECT COUNT(*) FROM InspectionResult ir JOIN Inspection i ON i.inspection_id=ir.inspection_id WHERE i.job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AND i.inspection_round=1 AND ir.criterion_name='FUNCTION_TEST' AND ir.result='PASS')=1 AND @pfi<>@pft,'PASS','FAIL') AS result, (SELECT COUNT(*) FROM Inspection WHERE job_id=(SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2)) AS inspection_count, (SELECT job_status FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_status"
+        },
+        {
+          "operation": "06_return_and_closure.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem1) AS job_id,'2026-10-28' AS returned_date,@pfm AS returned_by_staff_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem1 AND job_status='CLOSED' AND returned_date='2026-10-28' AND returned_by_staff_id=@pfm)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='IN_PROGRESS' AND (SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='READY_FOR_RETURN' AND returned_date IS NULL AND returned_by_staff_id IS NULL)=1,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        },
+        {
+          "operation": "06_return_and_closure.sql",
+          "parameters_sql": "SELECT (SELECT job_id FROM ServiceJob WHERE request_item_id=@pfitem2) AS job_id,'2026-10-29' AS returned_date,@pfm AS returned_by_staff_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM ServiceJob WHERE request_item_id=@pfitem2 AND job_status='CLOSED' AND returned_date='2026-10-29' AND returned_by_staff_id=@pfm)=1 AND (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr)='CLOSED' AND (SELECT COUNT(*) FROM RequestItem WHERE request_id=@pfr AND item_status='RECEIVED')=2 AND (SELECT COUNT(*) FROM ServiceJob j JOIN RequestItem ri ON ri.request_item_id=j.request_item_id WHERE ri.request_id=@pfr AND j.job_status='CLOSED' AND j.returned_date IS NOT NULL AND j.returned_by_staff_id=@pfm)=2,'PASS','FAIL') AS result, (SELECT request_status FROM ServiceRequest WHERE request_id=@pfr) AS request_status"
+        }
+      ],
+      "expected_errors": [],
+      "cases": [
+        {
+          "test_id": "PF05",
+          "requirement": "Multi-item first return stays open; final return closes request",
+          "initial_state": "Pending synthetic request with owned equipment and active technician/inspector/manager; no quotes/jobs/inspections; PF05 starts with two items before quotation",
+          "expected_result": "Every real operation succeeds and each step postcondition PASS; outer rollback restores full baseline"
+        }
+      ]
+    }
+  ]
+}
