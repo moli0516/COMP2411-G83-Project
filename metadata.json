@@ -15,7 +15,7 @@
     }
   ],
   "dbms": "MySQL Community Server",
-  "dbms_version": "TODO_VERIFY_8.4.11",
+  "dbms_version": "8.4.11",
   "database_name": "TODO_CONFIRM_DATABASE_NAME",
   "approval_reference": null
 }

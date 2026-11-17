@@ -1,4 +1,2 @@
--- INCOMPLETE: select a representative Query ID.
--- TODO: create an appropriate index OR identify and justify an existing index.
--- Explain indexed columns, selectivity, expected benefit, storage and maintenance.
--- No measured speedup is claimed.
+CREATE INDEX idx_corrective_action_due_date
+    ON CorrectiveAction (due_date);

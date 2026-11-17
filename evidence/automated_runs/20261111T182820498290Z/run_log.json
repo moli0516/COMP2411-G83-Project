@@ -1,0 +1,487 @@
+{
+  "utc_run": "20261111T182820498290Z",
+  "target": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "comp2411_test"
+  },
+  "skipped": [],
+  "scripts": [
+    {
+      "script": "positive.sql",
+      "sha256": "06c7f0d7a978071bbd8f986ec9bd48aef07bf75f11fd233fb7b77df3545a8007",
+      "events": [
+        {
+          "statement": 1,
+          "sql": "SELECT DATABASE() AS database_name, @@autocommit AS autocommit_setting;",
+          "rows": [
+            {
+              "database_name": "comp2411_test",
+              "autocommit_setting": 1
+            }
+          ]
+        },
+        {
+          "statement": 2,
+          "sql": "START TRANSACTION;",
+          "rowcount": 0
+        },
+        {
+          "statement": 3,
+          "sql": "INSERT INTO Customer(customer_name, phone, email)\nVALUES ('POS synthetic customer', '0000000000', NULL);",
+          "rowcount": 1
+        },
+        {
+          "statement": 4,
+          "sql": "SET @pos_customer = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 5,
+          "sql": "INSERT INTO Equipment(customer_id, component_type, brand, model,\n                      serial_no, physical_condition, accessories)\nVALUES (@pos_customer, 'GPU', 'TEST', 'POS-MODEL',\n        CONCAT('POS-', UUID()), 'Synthetic intact condition', 'NONE');",
+          "rowcount": 1
+        },
+        {
+          "statement": 6,
+          "sql": "SET @pos_equipment = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 7,
+          "sql": "INSERT INTO ServiceRequest(customer_id, request_date, fault_description)\nVALUES (@pos_customer, '2026-10-30', 'POS synthetic display fault');",
+          "rowcount": 1
+        },
+        {
+          "statement": 8,
+          "sql": "SET @pos_request = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 9,
+          "sql": "INSERT INTO RequestItem(request_id, equipment_id)\nVALUES (@pos_request, @pos_equipment);",
+          "rowcount": 1
+        },
+        {
+          "statement": 10,
+          "sql": "SET @pos_item = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 11,
+          "sql": "SELECT 'POS01' AS test_id,\n       IF(COUNT(*) = 1, 'PASS', 'FAIL') AS result,\n       COUNT(*) AS matching_owned_items\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nJOIN Equipment e ON e.equipment_id = ri.equipment_id\nWHERE r.request_id = @pos_request\n  AND e.customer_id = r.customer_id\n  AND ri.item_status = 'AWAITING_DELIVERY';",
+          "rows": [
+            {
+              "test_id": "POS01",
+              "result": "PASS",
+              "matching_owned_items": 1
+            }
+          ]
+        },
+        {
+          "statement": 12,
+          "sql": "SELECT 'POS02_BEFORE' AS test_id, request_id, request_status\nFROM ServiceRequest WHERE request_id = @pos_request;",
+          "rows": [
+            {
+              "test_id": "POS02_BEFORE",
+              "request_id": 71,
+              "request_status": "PENDING_QUOTATION"
+            }
+          ]
+        },
+        {
+          "statement": 13,
+          "sql": "INSERT INTO Quotation(request_id, quotation_version, quoted_amount,\n                      quotation_date, quotation_status)\nVALUES (@pos_request, 1, 500.00, '2026-10-30', 'PENDING');",
+          "rowcount": 1
+        },
+        {
+          "statement": 14,
+          "sql": "SET @pos_quote = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 15,
+          "sql": "UPDATE ServiceRequest SET request_status = 'QUOTED'\nWHERE request_id = @pos_request AND request_status = 'PENDING_QUOTATION';",
+          "rowcount": 1
+        },
+        {
+          "statement": 16,
+          "sql": "SELECT 'POS02' AS test_id,\n       IF(COUNT(*) = 1, 'PASS', 'FAIL') AS result,\n       COUNT(*) AS matching_quoted_requests\nFROM ServiceRequest r JOIN Quotation q ON q.request_id = r.request_id\nWHERE r.request_id = @pos_request AND r.request_status = 'QUOTED'\n  AND q.quotation_id = @pos_quote AND q.quoted_amount = 500.00\n  AND q.quotation_status = 'PENDING';",
+          "rows": [
+            {
+              "test_id": "POS02",
+              "result": "PASS",
+              "matching_quoted_requests": 1
+            }
+          ]
+        },
+        {
+          "statement": 17,
+          "sql": "DELETE FROM Quotation\nWHERE quotation_id = @pos_quote AND quotation_status = 'PENDING';",
+          "rowcount": 1
+        },
+        {
+          "statement": 18,
+          "sql": "DELETE FROM RequestItem WHERE request_item_id = @pos_item;",
+          "rowcount": 1
+        },
+        {
+          "statement": 19,
+          "sql": "DELETE FROM ServiceRequest WHERE request_id = @pos_request;",
+          "rowcount": 1
+        },
+        {
+          "statement": 20,
+          "sql": "DELETE FROM Equipment WHERE equipment_id = @pos_equipment;",
+          "rowcount": 1
+        },
+        {
+          "statement": 21,
+          "sql": "DELETE FROM Customer WHERE customer_id = @pos_customer;",
+          "rowcount": 1
+        },
+        {
+          "statement": 22,
+          "sql": "COMMIT;",
+          "rowcount": 0
+        },
+        {
+          "statement": 23,
+          "sql": "SELECT 'POS03' AS test_id,\n       IF((SELECT COUNT(*) FROM Customer WHERE customer_id = @pos_customer) = 0\n          AND (SELECT COUNT(*) FROM Equipment WHERE equipment_id = @pos_equipment) = 0\n          AND (SELECT COUNT(*) FROM ServiceRequest WHERE request_id = @pos_request) = 0\n          AND (SELECT COUNT(*) FROM RequestItem WHERE request_item_id = @pos_item) = 0\n          AND (SELECT COUNT(*) FROM Quotation WHERE quotation_id = @pos_quote) = 0,\n          'PASS', 'FAIL') AS result;",
+          "rows": [
+            {
+              "test_id": "POS03",
+              "result": "PASS"
+            }
+          ]
+        }
+      ],
+      "problems": []
+    },
+    {
+      "script": "transaction_commit.sql",
+      "sha256": "c69c28550edb4249320241b768b95adcfc9000fde6b09181c4ca14b7be50efab",
+      "events": [
+        {
+          "statement": 1,
+          "sql": "SELECT DATABASE() AS database_name, @@autocommit AS autocommit_setting;",
+          "rows": [
+            {
+              "database_name": "comp2411_test",
+              "autocommit_setting": 1
+            }
+          ]
+        },
+        {
+          "statement": 2,
+          "sql": "START TRANSACTION;",
+          "rowcount": 0
+        },
+        {
+          "statement": 3,
+          "sql": "INSERT INTO Customer(customer_name, phone)\nVALUES ('txc synthetic customer', '0000000000');",
+          "rowcount": 1
+        },
+        {
+          "statement": 4,
+          "sql": "SET @txc_customer = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 5,
+          "sql": "INSERT INTO Staff(staff_name, role, active_status)\nVALUES ('txc synthetic technician', 'TECHNICIAN', TRUE);",
+          "rowcount": 1
+        },
+        {
+          "statement": 6,
+          "sql": "SET @txc_technician = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 7,
+          "sql": "INSERT INTO Equipment(customer_id, component_type, brand, model,\n                      serial_no, physical_condition, accessories)\nVALUES (@txc_customer, 'GPU', 'TEST', 'TX-MODEL',\n        CONCAT('txc-', UUID()), 'Synthetic intact condition', 'NONE');",
+          "rowcount": 1
+        },
+        {
+          "statement": 8,
+          "sql": "SET @txc_equipment = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 9,
+          "sql": "INSERT INTO ServiceRequest(customer_id, request_date, fault_description, request_status)\nVALUES (@txc_customer, '2026-10-30', 'txc synthetic repair', 'ACCEPTED');",
+          "rowcount": 1
+        },
+        {
+          "statement": 10,
+          "sql": "SET @txc_request = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 11,
+          "sql": "INSERT INTO RequestItem(request_id, equipment_id, item_status)\nVALUES (@txc_request, @txc_equipment, 'AWAITING_DELIVERY');",
+          "rowcount": 1
+        },
+        {
+          "statement": 12,
+          "sql": "SET @txc_item = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 13,
+          "sql": "INSERT INTO Quotation(request_id, quotation_version, quoted_amount,\n                      quotation_date, quotation_status, customer_decision_date)\nVALUES (@txc_request, 1, 500.00, '2026-10-30', 'ACCEPTED', '2026-10-30');",
+          "rowcount": 1
+        },
+        {
+          "statement": 14,
+          "sql": "COMMIT;",
+          "rowcount": 0
+        },
+        {
+          "statement": 15,
+          "sql": "SELECT 'TXC01_BEFORE' AS test_id, r.request_id, r.request_status,\n       ri.request_item_id, ri.item_status, j.job_id, j.job_status\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nLEFT JOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE ri.request_item_id = @txc_item;",
+          "rows": [
+            {
+              "test_id": "TXC01_BEFORE",
+              "request_id": 72,
+              "request_status": "ACCEPTED",
+              "request_item_id": 122,
+              "item_status": "AWAITING_DELIVERY",
+              "job_id": null,
+              "job_status": null
+            }
+          ]
+        },
+        {
+          "statement": 16,
+          "sql": "START TRANSACTION;",
+          "rowcount": 0
+        },
+        {
+          "statement": 17,
+          "sql": "UPDATE RequestItem SET item_status = 'RECEIVED'\nWHERE request_item_id = @txc_item AND item_status = 'AWAITING_DELIVERY';",
+          "rowcount": 1
+        },
+        {
+          "statement": 18,
+          "sql": "INSERT INTO ServiceJob(request_item_id, technician_id, received_date, job_status)\nVALUES (@txc_item, @txc_technician, '2026-10-31', 'RECEIVED');",
+          "rowcount": 1
+        },
+        {
+          "statement": 19,
+          "sql": "SET @txc_job = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 20,
+          "sql": "UPDATE ServiceRequest SET request_status = 'IN_PROGRESS'\nWHERE request_id = @txc_request AND request_status = 'ACCEPTED';",
+          "rowcount": 1
+        },
+        {
+          "statement": 21,
+          "sql": "COMMIT;",
+          "rowcount": 0
+        },
+        {
+          "statement": 22,
+          "sql": "SELECT 'TXC01_AFTER' AS test_id, r.request_id, r.request_status,\n       ri.request_item_id, ri.item_status, j.job_id, j.job_status\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nLEFT JOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE ri.request_item_id = @txc_item;",
+          "rows": [
+            {
+              "test_id": "TXC01_AFTER",
+              "request_id": 72,
+              "request_status": "IN_PROGRESS",
+              "request_item_id": 122,
+              "item_status": "RECEIVED",
+              "job_id": 91,
+              "job_status": "RECEIVED"
+            }
+          ]
+        },
+        {
+          "statement": 23,
+          "sql": "SELECT 'TXC01' AS test_id,\n       IF(COUNT(*) = 1, 'PASS', 'FAIL') AS result,\n       COUNT(*) AS persisted_receipts\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nJOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE r.request_id = @txc_request AND r.request_status = 'IN_PROGRESS'\n  AND ri.request_item_id = @txc_item AND ri.item_status = 'RECEIVED'\n  AND j.job_id = @txc_job AND j.job_status = 'RECEIVED'\n  AND j.technician_id = @txc_technician AND j.received_date = '2026-10-31';",
+          "rows": [
+            {
+              "test_id": "TXC01",
+              "result": "PASS",
+              "persisted_receipts": 1
+            }
+          ]
+        }
+      ],
+      "problems": []
+    },
+    {
+      "script": "transaction_rollback.sql",
+      "sha256": "f5d94d4a936179b3e348a33b4e4cbaf2a67a3a5e068ed516ae1de1726a2224e0",
+      "events": [
+        {
+          "statement": 1,
+          "sql": "SELECT DATABASE() AS database_name, @@autocommit AS autocommit_setting;",
+          "rows": [
+            {
+              "database_name": "comp2411_test",
+              "autocommit_setting": 1
+            }
+          ]
+        },
+        {
+          "statement": 2,
+          "sql": "START TRANSACTION;",
+          "rowcount": 0
+        },
+        {
+          "statement": 3,
+          "sql": "INSERT INTO Customer(customer_name, phone)\nVALUES ('txr synthetic customer', '0000000000');",
+          "rowcount": 1
+        },
+        {
+          "statement": 4,
+          "sql": "SET @txr_customer = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 5,
+          "sql": "INSERT INTO Staff(staff_name, role, active_status)\nVALUES ('txr synthetic technician', 'TECHNICIAN', TRUE);",
+          "rowcount": 1
+        },
+        {
+          "statement": 6,
+          "sql": "SET @txr_technician = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 7,
+          "sql": "INSERT INTO Equipment(customer_id, component_type, brand, model,\n                      serial_no, physical_condition, accessories)\nVALUES (@txr_customer, 'GPU', 'TEST', 'TX-MODEL',\n        CONCAT('txr-', UUID()), 'Synthetic intact condition', 'NONE');",
+          "rowcount": 1
+        },
+        {
+          "statement": 8,
+          "sql": "SET @txr_equipment = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 9,
+          "sql": "INSERT INTO ServiceRequest(customer_id, request_date, fault_description, request_status)\nVALUES (@txr_customer, '2026-10-30', 'txr synthetic repair', 'ACCEPTED');",
+          "rowcount": 1
+        },
+        {
+          "statement": 10,
+          "sql": "SET @txr_request = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 11,
+          "sql": "INSERT INTO RequestItem(request_id, equipment_id, item_status)\nVALUES (@txr_request, @txr_equipment, 'AWAITING_DELIVERY');",
+          "rowcount": 1
+        },
+        {
+          "statement": 12,
+          "sql": "SET @txr_item = LAST_INSERT_ID();",
+          "rowcount": 0
+        },
+        {
+          "statement": 13,
+          "sql": "INSERT INTO Quotation(request_id, quotation_version, quoted_amount,\n                      quotation_date, quotation_status, customer_decision_date)\nVALUES (@txr_request, 1, 500.00, '2026-10-30', 'ACCEPTED', '2026-10-30');",
+          "rowcount": 1
+        },
+        {
+          "statement": 14,
+          "sql": "COMMIT;",
+          "rowcount": 0
+        },
+        {
+          "statement": 15,
+          "sql": "SELECT 'TXR01_BEFORE' AS test_id, r.request_id, r.request_status,\n       ri.request_item_id, ri.item_status, j.job_id, j.job_status\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nLEFT JOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE ri.request_item_id = @txr_item;",
+          "rows": [
+            {
+              "test_id": "TXR01_BEFORE",
+              "request_id": 73,
+              "request_status": "ACCEPTED",
+              "request_item_id": 123,
+              "item_status": "AWAITING_DELIVERY",
+              "job_id": null,
+              "job_status": null
+            }
+          ]
+        },
+        {
+          "statement": 16,
+          "sql": "START TRANSACTION;",
+          "rowcount": 0
+        },
+        {
+          "statement": 17,
+          "sql": "UPDATE RequestItem SET item_status = 'RECEIVED'\nWHERE request_item_id = @txr_item AND item_status = 'AWAITING_DELIVERY';",
+          "rowcount": 1
+        },
+        {
+          "statement": 18,
+          "sql": "INSERT INTO ServiceJob(request_item_id, technician_id, received_date, job_status)\nVALUES (@txr_item, @txr_technician, '2026-10-31', 'RECEIVED');",
+          "rowcount": 1
+        },
+        {
+          "statement": 19,
+          "sql": "UPDATE ServiceRequest SET request_status = 'IN_PROGRESS'\nWHERE request_id = @txr_request AND request_status = 'ACCEPTED';",
+          "rowcount": 1
+        },
+        {
+          "statement": 20,
+          "sql": "SELECT 'TXR01_INTERMEDIATE' AS test_id, r.request_id, r.request_status,\n       ri.request_item_id, ri.item_status, j.job_id, j.job_status\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nLEFT JOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE ri.request_item_id = @txr_item;",
+          "rows": [
+            {
+              "test_id": "TXR01_INTERMEDIATE",
+              "request_id": 73,
+              "request_status": "IN_PROGRESS",
+              "request_item_id": 123,
+              "item_status": "RECEIVED",
+              "job_id": 92,
+              "job_status": "RECEIVED"
+            }
+          ]
+        },
+        {
+          "statement": 21,
+          "sql": "INSERT INTO ServiceJob(request_item_id, technician_id, received_date, job_status)\nVALUES (@txr_item, @txr_technician, '2026-10-31', 'RECEIVED');",
+          "error": {
+            "errno": 1062,
+            "sqlstate": "23000",
+            "message": "1062 (23000): Duplicate entry '123' for key 'servicejob.request_item_id'"
+          },
+          "expected": true
+        },
+        {
+          "statement": 22,
+          "sql": "ROLLBACK;",
+          "rowcount": 0
+        },
+        {
+          "statement": 23,
+          "sql": "SELECT 'TXR01_AFTER' AS test_id, r.request_id, r.request_status,\n       ri.request_item_id, ri.item_status, j.job_id, j.job_status\nFROM ServiceRequest r\nJOIN RequestItem ri ON ri.request_id = r.request_id\nLEFT JOIN ServiceJob j ON j.request_item_id = ri.request_item_id\nWHERE ri.request_item_id = @txr_item;",
+          "rows": [
+            {
+              "test_id": "TXR01_AFTER",
+              "request_id": 73,
+              "request_status": "ACCEPTED",
+              "request_item_id": 123,
+              "item_status": "AWAITING_DELIVERY",
+              "job_id": null,
+              "job_status": null
+            }
+          ]
+        },
+        {
+          "statement": 24,
+          "sql": "SELECT 'TXR01' AS test_id,\n       IF((SELECT item_status FROM RequestItem\n           WHERE request_item_id = @txr_item) = 'AWAITING_DELIVERY'\n          AND (SELECT request_status FROM ServiceRequest\n               WHERE request_id = @txr_request) = 'ACCEPTED'\n          AND (SELECT COUNT(*) FROM ServiceJob\n               WHERE request_item_id = @txr_item) = 0,\n          'PASS', 'FAIL') AS result,\n       (SELECT COUNT(*) FROM ServiceJob\n        WHERE request_item_id = @txr_item) AS remaining_jobs;",
+          "rows": [
+            {
+              "test_id": "TXR01",
+              "result": "PASS",
+              "remaining_jobs": 0
+            }
+          ]
+        }
+      ],
+      "problems": []
+    }
+  ]
+}

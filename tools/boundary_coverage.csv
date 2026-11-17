@@ -1,0 +1,51 @@
+test_id,requirement,mode
+BT01,Negative quotation amount rejected,sql
+BT02,Quotation version zero rejected,sql
+BT03,Inspection round zero rejected,sql
+BT04,Action due date equal to created date accepted,sql
+BT05,IN_PROGRESS inspection accepts NULL final fields,sql
+BT06,COMPLETED inspection missing date rejected,sql
+BT07,COMPLETED inspection missing overall result rejected,sql
+BT08,COMPLETED inspection missing both final values rejected,sql
+BT09,Not-returned job accepts NULL return fields,sql
+BT10,CLOSED job missing return date rejected,sql
+BT11,CLOSED job missing returning staff rejected,sql
+BT12,CLOSED job missing both return fields rejected,sql
+BB01E,Customer.customer_name rejects empty string,sql
+BB01S,Customer.customer_name rejects space-only string,sql
+BB02E,Customer.phone rejects empty string,sql
+BB02S,Customer.phone rejects space-only string,sql
+BB03E,Staff.staff_name rejects empty string,sql
+BB03S,Staff.staff_name rejects space-only string,sql
+BB04E,Equipment.brand rejects empty string,sql
+BB04S,Equipment.brand rejects space-only string,sql
+BB05E,Equipment.model rejects empty string,sql
+BB05S,Equipment.model rejects space-only string,sql
+BB06E,Equipment.serial_no rejects empty string,sql
+BB06S,Equipment.serial_no rejects space-only string,sql
+BB07E,Equipment.physical_condition rejects empty string,sql
+BB07S,Equipment.physical_condition rejects space-only string,sql
+BB08E,Equipment.accessories rejects empty string,sql
+BB08S,Equipment.accessories rejects space-only string,sql
+BB09E,ServiceRequest.fault_description rejects empty string,sql
+BB09S,ServiceRequest.fault_description rejects space-only string,sql
+BB10E,ServiceJob.repair_description rejects empty string,sql
+BB10S,ServiceJob.repair_description rejects space-only string,sql
+BB11E,Incident.incident_type rejects empty string,sql
+BB11S,Incident.incident_type rejects space-only string,sql
+BB12E,Incident.incident_description rejects empty string,sql
+BB12S,Incident.incident_description rejects space-only string,sql
+BB13E,CorrectiveAction.action_description rejects empty string,sql
+BB13S,CorrectiveAction.action_description rejects space-only string,sql
+BB14E,CorrectiveAction.resolution_note rejects empty string,sql
+BB14S,CorrectiveAction.resolution_note rejects space-only string,sql
+BD01,Minimum positive amount 0.01 accepted by actual quotation operation,workflow
+BD02,Receipt on acceptance date accepted,workflow
+BD03,Receipt one day before acceptance rejected,workflow
+BD04,Receipt on request date accepted,workflow
+BD05,Receipt one day before request date rejected,workflow
+BD06,Inspection on repair completion date accepted,workflow
+BD07,Inspection one day before repair completion rejected,workflow
+BD08,Verification on resolution date accepted,workflow
+BD09,Verification one day before resolution rejected,workflow
+BD10,Negative quotation amount rejected by operation validation,workflow

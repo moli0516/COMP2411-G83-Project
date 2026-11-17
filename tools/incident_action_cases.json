@@ -1,0 +1,287 @@
+{
+  "scripts": [
+    {
+      "path": "workflow/IA01.sql",
+      "mode": "workflow",
+      "description": "Create HIGH incident, OPEN action and link through real operation",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'IA synthetic action' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident i JOIN IncidentCorrectiveAction l ON l.incident_id=i.incident_id JOIN CorrectiveAction a ON a.action_id=l.action_id WHERE i.incident_id=@op_incident_id AND i.job_id=@ij AND i.severity='HIGH' AND i.incident_status='OPEN' AND a.action_id=@op_action_id AND a.assigned_staff_id=@it AND a.action_status='OPEN' AND a.created_date='2026-10-30' AND a.due_date='2026-10-31' AND a.resolved_date IS NULL AND a.resolution_note IS NULL AND a.verified_by_manager_id IS NULL AND a.verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA01",
+          "requirement": "Create HIGH incident, OPEN action and link through real operation",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Each real operation succeeds and every step postcondition passes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA02.sql",
+      "mode": "workflow",
+      "description": "Rollback incident inserted before corrective-action constraint failure",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'   ' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "error",
+          "expected_error": {
+            "errno": 3819,
+            "sqlstate": "HY000",
+            "message_contains": "chk_correctiveaction_description_nonempty"
+          },
+          "failure_verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident WHERE job_id=@ij)=1 AND (SELECT COUNT(*) FROM CorrectiveAction WHERE assigned_staff_id=@it)=0 AND (SELECT COUNT(*) FROM IncidentCorrectiveAction l JOIN Incident i ON i.incident_id=l.incident_id WHERE i.job_id=@ij)=0,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA02",
+          "requirement": "Rollback incident inserted before corrective-action constraint failure",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Validation passes; incident exists when action INSERT fails with 3819/HY000; rollback removes all partial operation writes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\s+CorrectiveAction\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/IA03.sql",
+      "mode": "workflow",
+      "description": "Verify OPEN to IN_PROGRESS to RESOLVED to VERIFIED lifecycle",
+      "steps": [
+        {
+          "operation": "05_incident_corrective_action.sql",
+          "parameters_sql": "SELECT @ij AS job_id,@it AS reporter_id,'2026-10-30' AS incident_date,'QUALITY' AS incident_type,'HIGH' AS severity,'IA synthetic incident' AS incident_description,@it AS assigned_staff_id,'IA synthetic action' AS action_description,'2026-10-31' AS due_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM Incident i JOIN IncidentCorrectiveAction l ON l.incident_id=i.incident_id JOIN CorrectiveAction a ON a.action_id=l.action_id WHERE i.incident_id=@op_incident_id AND i.job_id=@ij AND i.severity='HIGH' AND i.incident_status='OPEN' AND a.action_id=@op_action_id AND a.assigned_staff_id=@it AND a.action_status='OPEN' AND a.created_date='2026-10-30' AND a.due_date='2026-10-31' AND a.resolved_date IS NULL AND a.resolution_note IS NULL AND a.verified_by_manager_id IS NULL AND a.verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "10_start_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='IN_PROGRESS' AND resolved_date IS NULL AND resolution_note IS NULL AND verified_by_manager_id IS NULL AND verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "11_resolve_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id,'2026-10-30' AS resolved_date,'IA repair procedure corrected' AS resolution_note",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='RESOLVED' AND resolved_date='2026-10-30' AND resolution_note='IA repair procedure corrected' AND verified_by_manager_id IS NULL AND verified_date IS NULL)=1,'PASS','FAIL') AS result"
+        },
+        {
+          "operation": "12_verify_action.sql",
+          "parameters_sql": "SELECT @op_action_id AS action_id,@im AS manager_id,'2026-10-31' AS verified_date",
+          "expected_outcome": "success",
+          "verification_sql": "SELECT IF((SELECT COUNT(*) FROM CorrectiveAction WHERE action_id=@op_action_id AND action_status='VERIFIED' AND assigned_staff_id=@it AND resolved_date='2026-10-30' AND resolution_note='IA repair procedure corrected' AND verified_by_manager_id=@im AND verified_date='2026-10-31')=1 AND (SELECT COUNT(*) FROM IncidentCorrectiveAction WHERE incident_id=@op_incident_id AND action_id=@op_action_id)=1,'PASS','FAIL') AS result"
+        }
+      ],
+      "cases": [
+        {
+          "test_id": "IA03",
+          "requirement": "Verify OPEN to IN_PROGRESS to RESOLVED to VERIFIED lifecycle",
+          "initial_state": "Isolated IA fixture from script; no concurrent writes; all fixture tables transactional",
+          "expected_result": "Each real operation succeeds and every step postcondition passes; outer rollback restores full baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA04.sql",
+      "mode": "workflow",
+      "description": "Reject verification of OPEN action",
+      "cases": [
+        {
+          "test_id": "IA04",
+          "requirement": "Reject verification of OPEN action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "12_verify_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,@iam AS manager_id,'2026-10-31' AS verified_date",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "workflow/IA05.sql",
+      "mode": "workflow",
+      "description": "Reject verification of IN_PROGRESS action",
+      "cases": [
+        {
+          "test_id": "IA05",
+          "requirement": "Reject verification of IN_PROGRESS action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "12_verify_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,@iam AS manager_id,'2026-10-31' AS verified_date",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "workflow/IA06.sql",
+      "mode": "workflow",
+      "description": "Reject re-resolution of VERIFIED action",
+      "cases": [
+        {
+          "test_id": "IA06",
+          "requirement": "Reject re-resolution of VERIFIED action",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Real operation rejects invalid state; full before/after snapshot identical; fixture rollback restores baseline"
+        }
+      ],
+      "expected_errors": [],
+      "operation": "11_resolve_action.sql",
+      "parameters_sql": "SELECT @iaa AS action_id,'2026-10-31' AS resolved_date,'Attempt reversal' AS resolution_note",
+      "expected_outcome": "reject",
+      "verification_sql": null
+    },
+    {
+      "path": "negative/N13.sql",
+      "mode": "negative",
+      "description": "RESOLVED requires resolved_date",
+      "cases": [
+        {
+          "test_id": "N13",
+          "requirement": "RESOLVED requires resolved_date",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N14.sql",
+      "mode": "negative",
+      "description": "RESOLVED requires resolution_note",
+      "cases": [
+        {
+          "test_id": "N14",
+          "requirement": "RESOLVED requires resolution_note",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N15.sql",
+      "mode": "negative",
+      "description": "VERIFIED requires verifying staff",
+      "cases": [
+        {
+          "test_id": "N15",
+          "requirement": "VERIFIED requires verifying staff",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "negative/N16.sql",
+      "mode": "negative",
+      "description": "VERIFIED requires verified_date",
+      "cases": [
+        {
+          "test_id": "N16",
+          "requirement": "VERIFIED requires verified_date",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "3819/HY000; rejected INSERT changes no rows; full baseline restored"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 3819,
+          "sqlstate": "HY000"
+        }
+      ]
+    },
+    {
+      "path": "workflow/IA07.sql",
+      "mode": "sql",
+      "description": "Accept legal OPEN and RESOLVED NULL field combinations",
+      "cases": [
+        {
+          "test_id": "IA07",
+          "requirement": "Accept legal OPEN and RESOLVED NULL field combinations",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Verification returns PASS; rollback restores fixture baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "workflow/IA08.sql",
+      "mode": "sql",
+      "description": "Support shared action across jobs and multiple actions per incident",
+      "cases": [
+        {
+          "test_id": "IA08",
+          "requirement": "Support shared action across jobs and multiple actions per incident",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Verification returns PASS; rollback restores fixture baseline"
+        }
+      ],
+      "expected_errors": []
+    },
+    {
+      "path": "negative/N17.sql",
+      "mode": "negative",
+      "description": "Reject duplicate incident/action link",
+      "cases": [
+        {
+          "test_id": "N17",
+          "requirement": "Reject duplicate incident/action link",
+          "initial_state": "Isolated synthetic fixture; current schema; no concurrent writes",
+          "expected_result": "Given at least one existing seeded link, 1062/23000; full data snapshot unchanged; cleanup restores baseline"
+        }
+      ],
+      "expected_errors": [
+        {
+          "statement_regex": "^INSERT\\s+INTO\\b",
+          "occurrence": 1,
+          "errno": 1062,
+          "sqlstate": "23000"
+        }
+      ]
+    }
+  ]
+}
