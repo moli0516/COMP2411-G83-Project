@@ -1,0 +1,10 @@
+technician_id,technician_name,active_status,unresolved_action_count
+1,Synthetic Staff 01,1,2
+2,Synthetic Staff 02,1,2
+3,Synthetic Staff 03,1,2
+4,Synthetic Staff 04,1,2
+5,Synthetic Staff 05,1,2
+6,Synthetic Staff 06,1,2
+7,Synthetic Staff 07,1,2
+8,Synthetic Staff 08,1,0
+9,Synthetic Staff 09,0,0
