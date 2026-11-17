@@ -10,4 +10,7 @@ local-backups/
 .old
 .venv
 automated_runs/
+__pycache__/
 build_runs/
+.patch
+regression-results/

@@ -22,22 +22,22 @@ Status baseline: 17 November 2026. Check off remaining tasks only after verifica
 
 - [X]  Confirm the final query database contains construction seed only, not committed test fixtures.
 - [X]  Confirm the local `sql/02_data.sql` contains the revised due dates for actions 21–30.
-- [ ]  Check Q01 SQL uses inspection completion dates in the chosen period.
-- [ ]  Confirm and document Q02's period; align with Q01 if directly comparing results.
+- [X]  Check Q01 SQL uses inspection completion dates in the chosen period.
+- [X]  Confirm and document Q02's period; align with Q01 if directly comparing results.
 - [X]  Check Q02 ranks by failed-job count with deterministic tie-breakers.
 - [X]  Verify Q03 includes RESOLVED actions awaiting verification.
 - [X]  Verify Q04 returns 14 equipment items: ten with two jobs and four with three.
 - [X]  Verify Q05 returns actions 21–25 with overdue days 20, 18, 16, 14, and 12; population average 11.
 - [X]  Keep Q06's header-only CSV and explain the intentional zero-row result.
-- [ ]  Separately demonstrate Q06 detects a missing required link; roll back the demonstration and do not export it as baseline.
-- [ ]  Verify Q07 retains technicians 8 and 9 with zero counts, including inactive technician 9.
-- [ ]  Inspect final Q08 SQL for open current jobs, earlier closed same-equipment jobs, completed failed first inspections, and return before current request.
-- [ ]  Add deterministic Q08 ordering if not already present.
-- [ ]  Export all eight CSVs together from the same clean baseline before running tests.
-- [ ]  Confirm CSV headers, SQL NULL as `\N`, and header-only empty results.
-- [ ]  Finalize `evidence/query_map.csv` with actual technique tags and meaningful business-question references.
-- [ ]  Resolve or replace all “group approval pending” descriptions after actual group agreement.
-- [ ]  Ensure documentation describes Q01/Q04 as base-table queries unless their final SQL uses views.
+- [X]  Separately demonstrate Q06 detects a missing required link; roll back the demonstration and do not export it as baseline.
+- [X]  Verify Q07 retains technicians 8 and 9 with zero counts, including inactive technician 9.
+- [X]  Inspect final Q08 SQL for open current jobs, earlier closed same-equipment jobs, completed failed first inspections, and return before current request.
+- [X]  Add deterministic Q08 ordering if not already present.
+- [X]  Export all eight CSVs together from the same clean baseline before running tests.
+- [X]  Confirm CSV headers, SQL NULL as `\N`, and header-only empty results.
+- [X]  Finalize `evidence/query_map.csv` with actual technique tags and meaningful business-question references.
+- [X]  Resolve or replace all “group approval pending” descriptions after actual group agreement.
+- [X]  Ensure documentation describes Q01/Q04 as base-table queries unless their final SQL uses views.
 
 Expected reporting outputs discussed, not a substitute for final SQL/content checks:
 
@@ -55,11 +55,11 @@ Expected reporting outputs discussed, not a substitute for final SQL/content che
 
 ## 3. Priority 2 — Index Justification
 
-- [ ]  Confirm `sql/04_indexes.sql` defines `idx_corrective_action_due_date` exactly once.
+- [X]  Confirm `sql/04_indexes.sql` defines `idx_corrective_action_due_date` exactly once.
 - [ ]  Cite target Query ID Q03 in index comments and report.
 - [ ]  Explain the supported due-date filter, expected selectivity/benefit, storage, and maintenance costs.
-- [ ]  Optionally retain EXPLAIN evidence from the actual query and database.
-- [ ]  Do not claim measured speedup without measurements; proof of speedup is not required.
+- [X]  Optionally retain EXPLAIN evidence from the actual query and database.
+- [X]  Do not claim measured speedup without measurements; proof of speedup is not required.
 
 ## 4. Priority 3 — Report and Required Documents
 
@@ -99,16 +99,16 @@ python tools/run_sql_tests.py --host 127.0.0.1 --port 3306 --user root --databas
 
 ## 6. Optional — WebUI Patch
 
-- [ ]  Back up local changes and run `git apply --unidiff-zero --check` on the downloaded patch.
-- [ ]  Apply only if compatible with the local WebUI; inspect the diff.
-- [ ]  Run existing WebUI unit tests.
-- [ ]  Test Q01–Q08 labels, Q01 period note, and Q06 empty-result CSV.
-- [ ]  Test minimum quotation amount 0.01 and inspection/severity dropdowns.
-- [ ]  Verify edits invalidate preview and commit requires a fresh preview.
-- [ ]  Verify query changes/commit attempts clear stale exports.
-- [ ]  Test preview rollback, committed IDs, error display, and connection identity against MySQL.
-- [ ]  Do not describe UI checks as covered by the 95-case SQL suite.
-- [ ]  Defer optional UI work if it threatens required deliverables.
+- [X]  Back up local changes and run `git apply --unidiff-zero --check` on the downloaded patch.
+- [X]  Apply only if compatible with the local WebUI; inspect the diff.
+- [X]  Run existing WebUI unit tests.
+- [X]  Test Q01–Q08 labels, Q01 period note, and Q06 empty-result CSV.
+- [X]  Test minimum quotation amount 0.01 and inspection/severity dropdowns.
+- [X]  Verify edits invalidate preview and commit requires a fresh preview.
+- [X]  Verify query changes/commit attempts clear stale exports.
+- [X]  Test preview rollback, committed IDs, error display, and connection identity against MySQL.
+- [X]  Do not describe UI checks as covered by the 95-case SQL suite.
+- [X]  Defer optional UI work if it threatens required deliverables.
 
 ## 7. Presentation and Submission
 
