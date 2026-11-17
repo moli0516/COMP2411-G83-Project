@@ -20,4 +20,5 @@ WHERE a.request_status <> 'CLOSED'
             AND ir.result = "FAIL"
             AND i.inspection_round = 1
             AND b.returned_date < a.request_date
-    );
+    )
+ORDER BY a.job_id ASC;

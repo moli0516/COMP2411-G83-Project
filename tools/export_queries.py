@@ -7,13 +7,13 @@ from pathlib import Path
 import mysql.connector
 
 
-QUERY_IDS = ("Q02", "Q03", "Q05", "Q08")
-PROJECT_DIR = Path(__file__).resolve().parent
+QUERY_IDS = tuple(f"Q{number:02d}" for number in range(1, 9))
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run Q02, Q03, Q05 and Q08; export results as CSV."
+        description="Run Q01–Q08; overwrite all eight result CSVs."
     )
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=3306)
@@ -23,6 +23,7 @@ def main():
 
     # Check all input files before connecting.
     queries = {}
+
     for query_id in QUERY_IDS:
         sql_file = PROJECT_DIR / "queries" / f"{query_id}.sql"
 
@@ -30,6 +31,7 @@ def main():
             raise FileNotFoundError(f"Missing SQL file: {sql_file}")
 
         sql = sql_file.read_text(encoding="utf-8-sig").strip()
+
         if not sql:
             raise ValueError(f"{sql_file.name} is empty.")
 
@@ -68,7 +70,10 @@ def main():
                         f"{query_id} did not return a result set."
                     )
 
-                headers = [column[0] for column in cursor.description]
+                headers = [
+                    column[0]
+                    for column in cursor.description
+                ]
                 rows = cursor.fetchall()
 
                 extra_results = False
@@ -87,7 +92,7 @@ def main():
 
                 results[query_id] = (headers, rows)
 
-        # End the read-only transaction; no database changes are saved.
+        # End the read-only transaction.
         connection.rollback()
 
     finally:
@@ -97,14 +102,18 @@ def main():
         finally:
             connection.close()
 
-    # Export only after all four queries have executed successfully.
+    # Start exporting only after all eight queries execute successfully.
     output_dir = PROJECT_DIR / "evidence" / "query_results"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     for query_id, (headers, rows) in results.items():
         csv_file = output_dir / f"{query_id}.csv"
 
-        with csv_file.open("w", encoding="utf-8", newline="") as file:
+        with csv_file.open(
+            "w",
+            encoding="utf-8",
+            newline="",
+        ) as file:
             writer = csv.writer(file)
             writer.writerow(headers)
 
@@ -114,14 +123,22 @@ def main():
                     for value in row
                 )
 
-        print(f"{query_id}: {len(rows)} rows exported to {csv_file}")
+        print(
+            f"{query_id}: {len(rows)} rows exported to {csv_file}"
+        )
 
-    print("Finished. Existing result CSVs have been replaced.")
+    print(
+        "Finished. Result CSVs for Q01–Q08 have been overwritten."
+    )
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (mysql.connector.Error, OSError, ValueError) as error:
+    except (
+        mysql.connector.Error,
+        OSError,
+        ValueError,
+    ) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         sys.exit(1)
