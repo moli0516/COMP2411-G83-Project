@@ -1,6 +1,7 @@
 -- Q01: First-round failure rate by hardware type
 -- Mapping: MQ01
 -- Proposed techniques: join;join3plus;group_by
+-- Period: 2026-03-01 through 2026-10-31 inclusive, by inspection_date.
 -- Percentage denominator: distinct jobs inspected within each component type.
 
 SELECT
@@ -30,6 +31,8 @@ JOIN Inspection AS i
     ON i.job_id = j.job_id
 WHERE i.inspection_round = 1
   AND i.inspection_status = 'COMPLETED'
+  AND i.inspection_date >= '2026-03-01'
+  AND i.inspection_date < '2026-11-01'
 GROUP BY
     e.component_type
 ORDER BY
