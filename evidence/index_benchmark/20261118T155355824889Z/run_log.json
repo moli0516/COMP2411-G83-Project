@@ -1,0 +1,35 @@
+{
+  "started_utc": "2026-11-18T15:53:55.827168+00:00",
+  "mode": "build",
+  "database": "comp2411_index_bench_selective100k",
+  "host": "127.0.0.1",
+  "port": 3306,
+  "commit": "a90bcc3eece981ca6ae90a10243218c6b3dae412",
+  "runner_sha256": "f5f6e0181ae376086676dad4a1eb71263e582fdc93527a20302afa6b76337cdf",
+  "scope": "Optional synthetic Q03 benchmark; separate from seed and SQL suite",
+  "created": true,
+  "construction": [
+    {
+      "file": "01_schema.sql",
+      "sha256": "941591327c98fe27375bef18bfe3589db0a9c4387825f90088ae735f17aa2881"
+    },
+    {
+      "file": "03_views.sql",
+      "sha256": "20fa610737a30522d5bde3c177f86ca1572f35a9c47fb5b420d5c7284e768b03"
+    },
+    {
+      "file": "04_indexes.sql",
+      "sha256": "23a4acfee6c0ed86fed57c9b63d2bfb1c3b568c5ce9c4e6966ab18e734af0c1a"
+    }
+  ],
+  "manifest": {
+    "kind": "COMP2411_Q03_SYNTHETIC_V1",
+    "scenario": "selective",
+    "rows": 100000,
+    "seed": 2411,
+    "reference_date": "2026-10-31",
+    "query_sha256": "a1bd969b0b6fda39ee995b8e7bd55671f4566c61f48bdf2a71675dc260fd7820",
+    "generator_sha256": "90b5a2273a8f42f25aa27394d57d5a4156be9d3895d3ebe94c59ec75c542a78b"
+  },
+  "status": "PASS"
+}

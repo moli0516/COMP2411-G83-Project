@@ -1,0 +1,103 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "1080.26"
+    },
+    "nested_loop": [
+      {
+        "table": {
+          "table_name": "ca",
+          "access_type": "range",
+          "possible_keys": [
+            "fk_correctiveaction_assigned_staff",
+            "idx_corrective_action_due_date"
+          ],
+          "key": "idx_corrective_action_due_date",
+          "used_key_parts": [
+            "due_date"
+          ],
+          "key_length": "3",
+          "rows_examined_per_scan": 1000,
+          "rows_produced_per_join": 899,
+          "filtered": "90.00",
+          "index_condition": "(`comp2411_index_bench_selective100k`.`ca`.`due_date` < DATE'2026-10-31')",
+          "cost_info": {
+            "read_cost": "360.26",
+            "eval_cost": "90.00",
+            "prefix_cost": "450.26",
+            "data_read_per_join": "6M"
+          },
+          "used_columns": [
+            "action_id",
+            "assigned_staff_id",
+            "due_date",
+            "action_status",
+            "verified_by_manager_id"
+          ],
+          "attached_condition": "(`comp2411_index_bench_selective100k`.`ca`.`action_status` <> 'VERIFIED')"
+        }
+      },
+      {
+        "table": {
+          "table_name": "assignee",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "staff_id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "comp2411_index_bench_selective100k.ca.assigned_staff_id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 899,
+          "filtered": "100.00",
+          "cost_info": {
+            "read_cost": "225.00",
+            "eval_cost": "90.00",
+            "prefix_cost": "765.26",
+            "data_read_per_join": "1M"
+          },
+          "used_columns": [
+            "staff_id",
+            "staff_name"
+          ]
+        }
+      },
+      {
+        "table": {
+          "table_name": "verifier",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "staff_id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "comp2411_index_bench_selective100k.ca.verified_by_manager_id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 899,
+          "filtered": "100.00",
+          "using_index": true,
+          "cost_info": {
+            "read_cost": "225.00",
+            "eval_cost": "90.00",
+            "prefix_cost": "1080.26",
+            "data_read_per_join": "1M"
+          },
+          "used_columns": [
+            "staff_id"
+          ]
+        }
+      }
+    ]
+  }
+}
