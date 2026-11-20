@@ -1,0 +1,97 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "41224.30"
+    },
+    "nested_loop": [
+      {
+        "table": {
+          "table_name": "ca",
+          "access_type": "ALL",
+          "possible_keys": [
+            "fk_correctiveaction_assigned_staff",
+            "idx_corrective_action_due_date"
+          ],
+          "rows_examined_per_scan": 98081,
+          "rows_produced_per_join": 44135,
+          "filtered": "45.00",
+          "cost_info": {
+            "read_cost": "5915.50",
+            "eval_cost": "4413.60",
+            "prefix_cost": "10329.10",
+            "data_read_per_join": "341M"
+          },
+          "used_columns": [
+            "action_id",
+            "assigned_staff_id",
+            "due_date",
+            "action_status",
+            "verified_by_manager_id"
+          ],
+          "attached_condition": "((`comp2411_index_bench_seed100k`.`ca`.`due_date` < DATE'2026-10-31') and (`comp2411_index_bench_seed100k`.`ca`.`action_status` <> 'VERIFIED'))"
+        }
+      },
+      {
+        "table": {
+          "table_name": "assignee",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "staff_id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "comp2411_index_bench_seed100k.ca.assigned_staff_id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 44135,
+          "filtered": "100.00",
+          "cost_info": {
+            "read_cost": "11034.00",
+            "eval_cost": "4413.60",
+            "prefix_cost": "25776.70",
+            "data_read_per_join": "68M"
+          },
+          "used_columns": [
+            "staff_id",
+            "staff_name"
+          ]
+        }
+      },
+      {
+        "table": {
+          "table_name": "verifier",
+          "access_type": "eq_ref",
+          "possible_keys": [
+            "PRIMARY"
+          ],
+          "key": "PRIMARY",
+          "used_key_parts": [
+            "staff_id"
+          ],
+          "key_length": "4",
+          "ref": [
+            "comp2411_index_bench_seed100k.ca.verified_by_manager_id"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 44135,
+          "filtered": "100.00",
+          "using_index": true,
+          "cost_info": {
+            "read_cost": "11034.00",
+            "eval_cost": "4413.60",
+            "prefix_cost": "41224.30",
+            "data_read_per_join": "68M"
+          },
+          "used_columns": [
+            "staff_id"
+          ]
+        }
+      }
+    ]
+  }
+}

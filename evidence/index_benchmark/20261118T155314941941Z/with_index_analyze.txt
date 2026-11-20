@@ -1,0 +1,7 @@
+-> Nested loop left join  (cost=41224 rows=44136) (actual time=0.02..63.8 rows=23810 loops=1)
+    -> Nested loop inner join  (cost=25777 rows=44136) (actual time=0.019..59.3 rows=23810 loops=1)
+        -> Filter: ((ca.due_date < DATE'2026-10-31') and (ca.action_status <> 'VERIFIED'))  (cost=10329 rows=44136) (actual time=0.015..41.7 rows=23810 loops=1)
+            -> Table scan on ca  (cost=10329 rows=98081) (actual time=0.0117..29.7 rows=100000 loops=1)
+        -> Single-row index lookup on assignee using PRIMARY (staff_id=ca.assigned_staff_id)  (cost=0.25 rows=1) (actual time=563e-6..594e-6 rows=1 loops=23810)
+    -> Single-row covering index lookup on verifier using PRIMARY (staff_id=ca.verified_by_manager_id)  (cost=0.25 rows=1) (actual time=69.8e-6..69.8e-6 rows=0 loops=23810)
+

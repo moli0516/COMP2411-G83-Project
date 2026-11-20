@@ -1,0 +1,122 @@
+{
+  "started_utc": "2026-11-18T15:53:14.944126+00:00",
+  "mode": "run",
+  "database": "comp2411_index_bench_seed100k",
+  "host": "127.0.0.1",
+  "port": 3306,
+  "commit": "a90bcc3eece981ca6ae90a10243218c6b3dae412",
+  "runner_sha256": "f5f6e0181ae376086676dad4a1eb71263e582fdc93527a20302afa6b76337cdf",
+  "scope": "Optional synthetic Q03 benchmark; separate from seed and SQL suite",
+  "manifest": {
+    "kind": "COMP2411_Q03_SYNTHETIC_V1",
+    "rows": 100000,
+    "seed": 2411,
+    "scenario": "seed_like",
+    "query_sha256": "a1bd969b0b6fda39ee995b8e7bd55671f4566c61f48bdf2a71675dc260fd7820",
+    "reference_date": "2026-10-31",
+    "generator_sha256": "90b5a2273a8f42f25aa27394d57d5a4156be9d3895d3ebe94c59ec75c542a78b"
+  },
+  "environment": [
+    "8.4.11",
+    1,
+    "index_merge=on,index_merge_union=on,index_merge_sort_union=on,index_merge_intersection=on,engine_condition_pushdown=on,index_condition_pushdown=on,mrr=on,mrr_cost_based=on,block_nested_loop=on,batched_key_access=off,materialization=on,semijoin=on,loosescan=on,firstmatch=on,duplicateweedout=on,subquery_materialization_cost_based=on,use_index_extensions=on,condition_fanout_filter=on,derived_merge=on,use_invisible_indexes=off,skip_scan=on,hash_join=on,subquery_to_derived=off,prefer_ordering_index=on,hypergraph_optimizer=off,derived_condition_pushdown=on,hash_set_operations=on"
+  ],
+  "indexes": [
+    [
+      "fk_correctiveaction_assigned_staff",
+      "YES",
+      "assigned_staff_id"
+    ],
+    [
+      "fk_correctiveaction_verified_manager",
+      "YES",
+      "verified_by_manager_id"
+    ],
+    [
+      "idx_corrective_action_due_date",
+      "YES",
+      "due_date"
+    ],
+    [
+      "PRIMARY",
+      "YES",
+      "action_id"
+    ]
+  ],
+  "population": {
+    "rows": 100000,
+    "date_matches": "71430",
+    "q03_matches": "23810",
+    "date_match_percentage": 71.43,
+    "q03_match_percentage": 23.81
+  },
+  "analyze_table": [
+    [
+      "comp2411_index_bench_seed100k.correctiveaction",
+      "analyze",
+      "status",
+      "OK"
+    ],
+    [
+      "comp2411_index_bench_seed100k.staff",
+      "analyze",
+      "status",
+      "OK"
+    ]
+  ],
+  "final_signature": {
+    "columns": [
+      "action_id",
+      "assigned_staff_id",
+      "assigned_staff_name",
+      "action_status",
+      "due_date",
+      "days_overdue"
+    ],
+    "rows": 23810,
+    "sha256": "4d12f2310fcde33ae37f2a68b28118ffd47d368c8abee59cfe09060f37df1ca7"
+  },
+  "index_restored_visible": true,
+  "signatures": {
+    "without_index": {
+      "columns": [
+        "action_id",
+        "assigned_staff_id",
+        "assigned_staff_name",
+        "action_status",
+        "due_date",
+        "days_overdue"
+      ],
+      "rows": 23810,
+      "sha256": "4d12f2310fcde33ae37f2a68b28118ffd47d368c8abee59cfe09060f37df1ca7"
+    },
+    "with_index": {
+      "columns": [
+        "action_id",
+        "assigned_staff_id",
+        "assigned_staff_name",
+        "action_status",
+        "due_date",
+        "days_overdue"
+      ],
+      "rows": 23810,
+      "sha256": "4d12f2310fcde33ae37f2a68b28118ffd47d368c8abee59cfe09060f37df1ca7"
+    }
+  },
+  "timings": {
+    "without_index": {
+      "runs": 10,
+      "median_seconds": 0.06556731200544164,
+      "min_seconds": 0.0626579160161782,
+      "max_seconds": 0.06836395800928585
+    },
+    "with_index": {
+      "runs": 10,
+      "median_seconds": 0.06576714599214029,
+      "min_seconds": 0.06449600000632927,
+      "max_seconds": 0.08491270800004713
+    }
+  },
+  "median_ratio_without_over_with": 0.9969614921906064,
+  "status": "PASS"
+}
