@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py", line 21, in main
+    config = credentials(args, run)
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 81, in credentials
+    check(
+    ~~~~~^
+        len(args.database) <= 64
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        "Use a dedicated database named comp2411_test_regression_<suffix>",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 27, in check
+    raise AssertionError(message)
+AssertionError: Use a dedicated database named comp2411_test_regression_<suffix>

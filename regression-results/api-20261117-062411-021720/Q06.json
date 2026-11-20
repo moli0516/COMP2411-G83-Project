@@ -1,0 +1,9 @@
+{
+  "columns": [
+    "incident_id",
+    "job_id",
+    "severity",
+    "incident_date"
+  ],
+  "rows": []
+}

@@ -1,0 +1,9 @@
+{
+  "runner": "browser",
+  "started_utc": "2026-11-17T06:25:11.323433+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": false,
+  "cases": [],
+  "error": "Traceback (most recent call last):\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/browser_smoke.py\", line 16, in main\n    config = credentials(args, run)\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 90, in credentials\n    check(input(\"Type the exact disposable database name: \") == args.database, \"Confirmation mismatch\")\n          ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nKeyboardInterrupt\n",
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

@@ -1,0 +1,20 @@
+{
+  "runner": "api",
+  "started_utc": "2026-11-17T06:22:36.798517+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": false,
+  "cases": [
+    {
+      "name": "existing_webui_unit_tests",
+      "status": "PASS",
+      "seconds": 0.3025493749883026
+    },
+    {
+      "name": "config_connection_and_security",
+      "status": "FAIL",
+      "seconds": 0.002906542009441182
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py\", line 26, in main\n    data = server.call(\"/api/connection\", {})\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 169, in call\n    check(code == expected, f\"{path}: expected HTTP {expected}, got {code}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 27, in check\n    raise AssertionError(message)\nAssertionError: /api/connection: expected HTTP 200, got 400\n",
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

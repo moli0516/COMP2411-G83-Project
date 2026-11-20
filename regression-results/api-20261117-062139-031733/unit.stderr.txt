@@ -1,0 +1,14 @@
+test_config (test_webui.WebUITest.test_config) ... ok
+test_csrf (test_webui.WebUITest.test_csrf) ... ok
+test_host (test_webui.WebUITest.test_host) ... ok
+test_invalid_table (test_webui.WebUITest.test_invalid_table) ... ok
+test_no_commit_without_preview (test_webui.WebUITest.test_no_commit_without_preview) ... ok
+test_origin (test_webui.WebUITest.test_origin) ... ok
+test_reject_multiple_queries (test_webui.WebUITest.test_reject_multiple_queries) ... ok
+test_reject_update_query (test_webui.WebUITest.test_reject_update_query) ... ok
+test_split (test_webui.WebUITest.test_split) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.075s
+
+OK

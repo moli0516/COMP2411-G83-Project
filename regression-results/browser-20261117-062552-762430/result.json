@@ -1,0 +1,80 @@
+{
+  "runner": "browser",
+  "started_utc": "2026-11-17T06:25:52.762941+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": true,
+  "cases": [
+    {
+      "name": "page_boot_and_labels",
+      "status": "PASS",
+      "seconds": 0.4637229999934789
+    },
+    {
+      "name": "Q01_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.3866285419790074
+    },
+    {
+      "name": "Q02_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.2135563330084551
+    },
+    {
+      "name": "Q03_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.20471395799540915
+    },
+    {
+      "name": "Q04_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.2411714999761898
+    },
+    {
+      "name": "Q05_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.1821425829839427
+    },
+    {
+      "name": "Q06_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.15841949998866767
+    },
+    {
+      "name": "Q07_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.3849833749991376
+    },
+    {
+      "name": "Q08_render_download_and_stale_export",
+      "status": "PASS",
+      "seconds": 0.9217047920101322
+    },
+    {
+      "name": "connection_and_readonly_safety",
+      "status": "PASS",
+      "seconds": 0.25267979101045057
+    },
+    {
+      "name": "operation_controls",
+      "status": "PASS",
+      "seconds": 0.226598416978959
+    },
+    {
+      "name": "preview_error_rollback_and_edit_invalidation",
+      "status": "PASS",
+      "seconds": 0.40195787500124425
+    },
+    {
+      "name": "cancel_commit_then_commit_and_invalidate_export",
+      "status": "PASS",
+      "seconds": 0.7725973750057165
+    },
+    {
+      "name": "no_uncaught_javascript_errors",
+      "status": "PASS",
+      "seconds": 1.7909915186464787e-06
+    }
+  ],
+  "error": null,
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

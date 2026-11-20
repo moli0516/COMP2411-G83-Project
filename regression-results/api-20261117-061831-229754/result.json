@@ -1,0 +1,15 @@
+{
+  "runner": "api",
+  "started_utc": "2026-11-17T06:18:31.230142+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": false,
+  "cases": [
+    {
+      "name": "existing_webui_unit_tests",
+      "status": "PASS",
+      "seconds": 0.3096002080128528
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py\", line 21, in main\n    config = credentials(args, run)\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 84, in credentials\n    check(input(\"Type the exact disposable database name: \") == args.database, \"Confirmation mismatch\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 27, in check\n    raise AssertionError(message)\nAssertionError: Confirmation mismatch\n",
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

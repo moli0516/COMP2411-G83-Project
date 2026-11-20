@@ -1,0 +1,15 @@
+{
+  "runner": "api",
+  "started_utc": "2026-11-17T06:21:39.032039+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": false,
+  "cases": [
+    {
+      "name": "existing_webui_unit_tests",
+      "status": "PASS",
+      "seconds": 0.2663121669902466
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py\", line 21, in main\n    config = credentials(args, run)\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 81, in credentials\n    check(\n    ~~~~~^\n        len(args.database) <= 64\n        ^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<4 lines>...\n        \"Use a dedicated database named comp2411_test_regression_<suffix>\",\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py\", line 27, in check\n    raise AssertionError(message)\nAssertionError: Use a dedicated database named comp2411_test_regression_<suffix>\n",
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

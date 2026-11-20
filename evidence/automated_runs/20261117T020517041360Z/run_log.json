@@ -1,0 +1,943 @@
+{
+  "target": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "comp2411_rebuild"
+  },
+  "metadata_sha256": "6cf355e6aa8a2f1a6f64ab04ab76a482a18be6776370c40a56267c3e09930d1f",
+  "planned": [
+    "positive.sql",
+    "transaction_commit.sql",
+    "transaction_rollback.sql",
+    "negative/N01.sql",
+    "negative/N02.sql",
+    "negative/N03.sql",
+    "negative/N04.sql",
+    "negative/N05.sql",
+    "negative/N06.sql",
+    "negative/N07.sql",
+    "negative/N08.sql",
+    "negative/N09.sql",
+    "negative/N10.sql",
+    "negative/N11.sql",
+    "negative/N12.sql",
+    "negative/N13.sql",
+    "negative/N14.sql",
+    "negative/N15.sql",
+    "negative/N16.sql",
+    "negative/N17.sql",
+    "workflow/IA01.sql",
+    "workflow/IA02.sql",
+    "workflow/IA03.sql",
+    "workflow/IA04.sql",
+    "workflow/IA05.sql",
+    "workflow/IA06.sql",
+    "workflow/IA07.sql",
+    "workflow/IA08.sql",
+    "workflow/PF01.sql",
+    "workflow/PF02.sql",
+    "workflow/PF03.sql",
+    "workflow/PF04.sql",
+    "workflow/PF05.sql",
+    "workflow/W01.sql",
+    "workflow/W02.sql",
+    "workflow/W03.sql",
+    "workflow/W04.sql",
+    "workflow/W05.sql",
+    "workflow/W06.sql",
+    "workflow/W07.sql",
+    "workflow/W08.sql",
+    "workflow/W09.sql",
+    "workflow/W10.sql",
+    "boundary/BB01E.sql",
+    "boundary/BB01S.sql",
+    "boundary/BB02E.sql",
+    "boundary/BB02S.sql",
+    "boundary/BB03E.sql",
+    "boundary/BB03S.sql",
+    "boundary/BB04E.sql",
+    "boundary/BB04S.sql",
+    "boundary/BB05E.sql",
+    "boundary/BB05S.sql",
+    "boundary/BB06E.sql",
+    "boundary/BB06S.sql",
+    "boundary/BB07E.sql",
+    "boundary/BB07S.sql",
+    "boundary/BB08E.sql",
+    "boundary/BB08S.sql",
+    "boundary/BB09E.sql",
+    "boundary/BB09S.sql",
+    "boundary/BB10E.sql",
+    "boundary/BB10S.sql",
+    "boundary/BB11E.sql",
+    "boundary/BB11S.sql",
+    "boundary/BB12E.sql",
+    "boundary/BB12S.sql",
+    "boundary/BB13E.sql",
+    "boundary/BB13S.sql",
+    "boundary/BB14E.sql",
+    "boundary/BB14S.sql",
+    "boundary/BD01.sql",
+    "boundary/BD02.sql",
+    "boundary/BD03.sql",
+    "boundary/BD04.sql",
+    "boundary/BD05.sql",
+    "boundary/BD06.sql",
+    "boundary/BD07.sql",
+    "boundary/BD08.sql",
+    "boundary/BD09.sql",
+    "boundary/BD10.sql",
+    "boundary/BT01.sql",
+    "boundary/BT02.sql",
+    "boundary/BT03.sql",
+    "boundary/BT04.sql",
+    "boundary/BT05.sql",
+    "boundary/BT06.sql",
+    "boundary/BT07.sql",
+    "boundary/BT08.sql",
+    "boundary/BT09.sql",
+    "boundary/BT10.sql",
+    "boundary/BT11.sql",
+    "boundary/BT12.sql"
+  ],
+  "not_run": [],
+  "scripts": [
+    {
+      "script": "positive.sql",
+      "sha256": "06c7f0d7a978071bbd8f986ec9bd48aef07bf75f11fd233fb7b77df3545a8007",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "transaction_commit.sql",
+      "sha256": "c69c28550edb4249320241b768b95adcfc9000fde6b09181c4ca14b7be50efab",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "transaction_rollback.sql",
+      "sha256": "f5d94d4a936179b3e348a33b4e4cbaf2a67a3a5e068ed516ae1de1726a2224e0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N01.sql",
+      "sha256": "14b6b953c9d8f04207b3106d772305dcc07b9be1b04ff0c50cf222cec1d07bf2",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N02.sql",
+      "sha256": "7c01f1b247558a3616ed536cbcdde3ebaf3d410e4beb97876edc4862258a07e9",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N03.sql",
+      "sha256": "36b9846c07183463f92d4959f58a78fb45250b54d4ec6d2610c387e0859de8c6",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N04.sql",
+      "sha256": "ccc21b5c9bfddbb207ba8ef8e7dbf66da1aa07921fbb9717234bc04727d1c41f",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N05.sql",
+      "sha256": "be9230ad92ec80e46d49dac940b16dd7b3d20c8dadd1605ebf22d0ff50527c70",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N06.sql",
+      "sha256": "a14778940a43d7093f4bdb301a1470ef27b6a3e94fd0839f772264b4e474bc21",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N07.sql",
+      "sha256": "44e05eb3e0272d84d390c67898e275102facc68352a6670ff990aeeca1f1cd50",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N08.sql",
+      "sha256": "8c8e766930f432f4e9ec3d2f95cf77433057600382c8a88a30821b2a7ca2165b",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N09.sql",
+      "sha256": "975c083876eaa4e050c552b397737c75f86ec31bed0852f8de08d95775ced7f3",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N10.sql",
+      "sha256": "3041605c2e2c3bbcdd3e23616c891d1371f7a66e5a7fa51f815ff9060525c411",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N11.sql",
+      "sha256": "9b8dca16e50d2107ef2051e7be8d160c5b5c5ffd05bea0e8ccbda2db6bf9e3fc",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N12.sql",
+      "sha256": "1c639ea03e23259091ba6207927c772acd2ad486475e84c0f2caaa95f80e04ed",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N13.sql",
+      "sha256": "d62b4a68af698700c37cc922d10249ba61633ea85bbe5aa20834facee6a63ed6",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N14.sql",
+      "sha256": "d2560fa6cadb3ef25db21940443f3f5ccc4537abd2d31e97420d0cb825d441f0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N15.sql",
+      "sha256": "df0b6f550a14e1b3d76e6bf721e08efe06ba135951d488eaaa1126faab0578f0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N16.sql",
+      "sha256": "e92f3003d65540328ae6ab3d72e40f7d11c0cb3953b55f666c9d7c5f9f53c310",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "negative/N17.sql",
+      "sha256": "ad6318331b4496ab0fd8fafb15f9099101dba9685ea64f6d44d23c2c45fa8236",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA01.sql",
+      "sha256": "70895db068dc740920bbd5d302d81b0f63df75071de2b110bf8d9385c4d2d1b6",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA02.sql",
+      "sha256": "2003454c9d78fa4d35ab1e0bd327b5a701072fbb506ba1b2860afc1c6e071357",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA03.sql",
+      "sha256": "0978e80ae174a8e2b7dcc2b9a62739e23e10dd57cbbeed1a756bde8a2dfc1c7a",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA04.sql",
+      "sha256": "ace6adc66cb73b5daabcea5eb5e5cd1da072015d65e0af282f796df3d94c7fc3",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA05.sql",
+      "sha256": "bd017b59ab410355e7ab7f03d67aa61ac173074434f27fbbde7f520125ce5cb4",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA06.sql",
+      "sha256": "4cccf07842a9f2d507dfd306f622a78f6875317be409bb4275828c09bac36cf1",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA07.sql",
+      "sha256": "4e6cab5977e0c89dc30058492ff4208c3256950c86034fbdec1d5240f21fea5e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/IA08.sql",
+      "sha256": "7746825c3a555b66a681b017d76a9ebf55c2d2a7f3d35179e6d3a63a7f45968f",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/PF01.sql",
+      "sha256": "e141a7450acf3cd7ba683fe07109d8457cb666aeb378c2dcec1160f7a3a3aeb1",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/PF02.sql",
+      "sha256": "727ef1bc19219540cf7ffffbf82675f6d80622e64669b13862dba003a1885724",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/PF03.sql",
+      "sha256": "d65709f3db6aee4621e7617ca6c3aa2477bff03fdc3d8602ab154e68a4e2266d",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/PF04.sql",
+      "sha256": "0cea1a02414b79e21aa2828daf900c1050e16514d570a379841f17bed06fde01",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/PF05.sql",
+      "sha256": "74051aaf2baf22ec61607de047686fcfd1888ec24ecab8f3e753cec76f8231ab",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W01.sql",
+      "sha256": "214bc03366a5dd2ac1a36820988bb0ec4480ccb63e242380a8d4afd9bcbf1f1a",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W02.sql",
+      "sha256": "6aa4766b0a93092c5730ecb13f35c93e006b8b1bfab3cb8fbb245eff05e548c4",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W03.sql",
+      "sha256": "48b8d3d0211567c7f6eb31a2c2c8be5f51a5e294e7d72cc26b613edaf62ac68c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W04.sql",
+      "sha256": "0057fcba42c5d07a86017dbeb88d7869f047623a7ef4d5389986c732429adf5b",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W05.sql",
+      "sha256": "4223de7bb64b5154c0d5575e6c695bc77528c9ad934b0db5884863d53d8b5ee7",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W06.sql",
+      "sha256": "2d9819ea9c4afb7764f6dcf68ff34a1fac62ee34b90ba11a5ac9abc28743d598",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W07.sql",
+      "sha256": "13c722a62de73274a931d15ee3b8840c832db0a1211c41aa01df3514d36a649e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W08.sql",
+      "sha256": "8ce1a2b3b92787c700edd40ba710633601d744abf9ba96a2df7cddd66bdb812c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W09.sql",
+      "sha256": "5bf234c11e7318d8929f49ab3951b70bb280902507e2af281ab94903087cb6a3",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "workflow/W10.sql",
+      "sha256": "c25811d72539648dfcf468d151e3b0ebaedf6902e4fa1f3f151ccffd889b0081",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB01E.sql",
+      "sha256": "06e34e0a0079bd48f607d63cc0f5206050e5faacf833ba1c728f3f3cdbfb90c0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB01S.sql",
+      "sha256": "90dfbce00634ab40ae4ab42ddabd01b736ca612429cd2acf09a629b538dfb6ae",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB02E.sql",
+      "sha256": "9ac508a6d17e6a5b2e63b95f2132d616d9d7288aa4d55faed7ecbf70064b4719",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB02S.sql",
+      "sha256": "e1d45149b9b9354d42af00eac00fd3e8ae1a46bf33a6f4db3f76e98dc3d1e774",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB03E.sql",
+      "sha256": "c1df8b486f3a4b89a993438cc6931f0da026bd7e82f0624fa3b6ce131901f80c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB03S.sql",
+      "sha256": "e209f8007db0db8d43588f5bd2d4a10dcc499ac08b02dbf25fc5b2642de6d496",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB04E.sql",
+      "sha256": "0d9c4d8a9065e2b624fb22dbe97777b13ec286f8532eaefed61cad5006cc2266",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB04S.sql",
+      "sha256": "8a4f70403541026197177f23e005b50a802530bb545fdbf5d1b1a64f2b449933",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB05E.sql",
+      "sha256": "6069ac8b100ffeccc0d26f168a9f44914ac5f4baf2bc195c844462a5a15d2905",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB05S.sql",
+      "sha256": "544ff52f6d1488b5f51d443c6389a4306c6192e6126fbd96082cdfe92328b474",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB06E.sql",
+      "sha256": "25decefddf5a429a90559a5884d3061520df61fc8842a5c4841fae1f9660c60b",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB06S.sql",
+      "sha256": "ca9fc12da83d57117f373fdbad2e8847ccaea765d1c56a4af24d6ba6b839835a",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB07E.sql",
+      "sha256": "2fefa765206a12346fe820118eaac0805a32b470ea4b4370685c8bec91ca83bf",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB07S.sql",
+      "sha256": "33dae0178cbbf201c5a58e384295372412ee8aa574d91c19b3ca63099173183e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB08E.sql",
+      "sha256": "4797d8e8820a7854a3d5c2b9374e0c660c5befb900b861e73b087dc765f7b929",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB08S.sql",
+      "sha256": "cff8898f56261255eb37f4f47d216af7e5097b22ec68bdbf421b6690a8b82984",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB09E.sql",
+      "sha256": "9162a87d77d1fffd230efb1ac4782c97c713e25a4599c57f03426e2c6d2e46da",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB09S.sql",
+      "sha256": "c5134d913739037f861d22845bc69be4907a76fdc4acc199d81fd286d28f50f0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB10E.sql",
+      "sha256": "ae03e34a1b2d27067ac4e51b9fab47686419761e9d2e992c5c19b0a384e16b52",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB10S.sql",
+      "sha256": "97084e040055a3c914dc89064222c9f45a1e1f1fe0f726149b76c0fc9e52936c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB11E.sql",
+      "sha256": "4827901ef6095ce27c1d9c934a4c7552e20f8c6849dd73ae48b1dd6b2fa72c57",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB11S.sql",
+      "sha256": "377b48db0a6ae92bf4b7e2ff072c494185631d03a7ba88f71098d5bcce32c71e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB12E.sql",
+      "sha256": "e119dbba59e60d14c4b10ceef2f6f2e08dfa433ae1e9c674b8afba229eaae231",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB12S.sql",
+      "sha256": "d0115ab747f30df406d628731acc4787991823ee7334b2edbbe8e4ebe12756c9",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB13E.sql",
+      "sha256": "34c653043655bfec602472e1325f52300d99e563dffc2494bb900a69738234fe",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB13S.sql",
+      "sha256": "fd0c9ad6b1fe8ed0f5081c94ef58da309ee1a4072ee7aaa40b21d1f33132d0b9",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB14E.sql",
+      "sha256": "cba726bd2fb3a81b865849a79dae2599c07232f051149ee5fd6b391a4954cbd7",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BB14S.sql",
+      "sha256": "c9faad7a3397b0edb68ce82796e1b92e9952380d015f6dbdede28da306966079",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD01.sql",
+      "sha256": "132ef2ac55a681e1cb92507b3c59b817322d43b2cdb945e71be453985668e78c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD02.sql",
+      "sha256": "b669bc45fa1a67d774e1144d25945fe00fb331e0badd58040ec710002198ed24",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD03.sql",
+      "sha256": "913c6b9702ae459e7df08c92590149032859156439c8f4058b59e0e9933dee0f",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD04.sql",
+      "sha256": "f36b0a4e544e07d7ab1414808be4ffdb72e4d75c6b68c698fab87dcb001504f0",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD05.sql",
+      "sha256": "5d15e85d20e6bac70bd55051dd9b27d2dd041948ffb1972b6fb257815817b132",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD06.sql",
+      "sha256": "ff69481cc055015e2359b4da69b2d8d9ab1bfd09503c0e35d4fdf89e983fd194",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD07.sql",
+      "sha256": "088ec2b2e393092a13ea8e12f6749010eae0bfcfc3079a4e66e4e28480aee176",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD08.sql",
+      "sha256": "87e3c9a892c82ccc59300243d9342e2232f3ed6a14ac7a2643a444d5660a3664",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD09.sql",
+      "sha256": "f7dc87920f786de718e5e57410cbf8e23a26c6c2d508a8a69990d8390b6b5717",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BD10.sql",
+      "sha256": "59ae3264b9ae313af6a2077d1517c7eee97f9e5d5eca5889b7071de49f4ec6c3",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT01.sql",
+      "sha256": "b71a2049051d3ba9c437bcdafb29cefaba07ac1d340ccca1556095099b7dd545",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT02.sql",
+      "sha256": "77dca8f791bbb99e31e91dc71d9856a9e415c7ba3a57de65ffeacedacbd97cfb",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT03.sql",
+      "sha256": "db649850c7026b5d44f7718fd645d298f8142e8eb53df0e2a393881f5d60de38",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT04.sql",
+      "sha256": "0dd07bdab6bfbb520f122663061f32b57aa130ec239c2dace4eadc840711e622",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT05.sql",
+      "sha256": "cc93f127c8132e2f05d67bf0b83b1b94815861e44f63f0edc51566e7133b42c4",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT06.sql",
+      "sha256": "ca56b93fc27351faa58b2725de6c7214d4fa7b09b32c3841bce835278e4a069e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT07.sql",
+      "sha256": "81435e306334089353ddf7f7cc2ab079da48f7ac1bb82b7538c0765337dc5b0c",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT08.sql",
+      "sha256": "9c9137e8e8edeed2e3ce02a926e784df65fa5fa3a4e9cf010278c79a49b1fbd9",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT09.sql",
+      "sha256": "0dab2a3568770c827b18e3d73007cb29e7f6ef88c22f6c8daf6c94da25b5518e",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT10.sql",
+      "sha256": "b2b61a3d62b344131e24315ca3e41f0a2596afb3b0692afa5c0fcb778c923339",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT11.sql",
+      "sha256": "8406882d79d09e34eaaaa910e4890dfb1f46d5918c337329dc738245b7f52828",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    },
+    {
+      "script": "boundary/BT12.sql",
+      "sha256": "94c673412f24589590195a714670a3a7e6a1c444e41db02900390f814f1beca4",
+      "details": {
+        "problems": [
+          "1049 (42000): Unknown database 'comp2411_rebuild'"
+        ]
+      }
+    }
+  ]
+}

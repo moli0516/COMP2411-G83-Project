@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py", line 26, in main
+    data = server.call("/api/connection", {})
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 169, in call
+    check(code == expected, f"{path}: expected HTTP {expected}, got {code}")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 27, in check
+    raise AssertionError(message)
+AssertionError: /api/connection: expected HTTP 200, got 400

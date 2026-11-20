@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/api_regression.py", line 21, in main
+    config = credentials(args, run)
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 84, in credentials
+    check(input("Type the exact disposable database name: ") == args.database, "Confirmation mismatch")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 27, in check
+    raise AssertionError(message)
+AssertionError: Confirmation mismatch

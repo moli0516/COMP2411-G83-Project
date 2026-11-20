@@ -1,0 +1,80 @@
+{
+  "runner": "api",
+  "started_utc": "2026-11-17T06:24:11.022064+00:00",
+  "commit": "a90f9303ab8c33ce45b880a0208824a199c77ca4",
+  "passed": true,
+  "cases": [
+    {
+      "name": "existing_webui_unit_tests",
+      "status": "PASS",
+      "seconds": 0.3121167500212323
+    },
+    {
+      "name": "config_connection_and_security",
+      "status": "PASS",
+      "seconds": 0.1313563330040779
+    },
+    {
+      "name": "Q01_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.04951133401482366
+    },
+    {
+      "name": "Q02_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.055307333008386195
+    },
+    {
+      "name": "Q03_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.051258624996989965
+    },
+    {
+      "name": "Q04_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.02502758300397545
+    },
+    {
+      "name": "Q05_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.029687834001379088
+    },
+    {
+      "name": "Q06_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.018430084019200876
+    },
+    {
+      "name": "Q07_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.02323708400945179
+    },
+    {
+      "name": "Q08_http_matches_direct_sql",
+      "status": "PASS",
+      "seconds": 0.04248020800878294
+    },
+    {
+      "name": "all_table_browsers_and_read_only_snapshot",
+      "status": "PASS",
+      "seconds": 0.10085754099418409
+    },
+    {
+      "name": "preview_rollback_and_validation_failure_safety",
+      "status": "PASS",
+      "seconds": 0.042261416994733736
+    },
+    {
+      "name": "commit_dynamic_ids_and_single_use_ticket",
+      "status": "PASS",
+      "seconds": 0.027570582984481007
+    },
+    {
+      "name": "quotation_001_preview_and_zero_rejected",
+      "status": "PASS",
+      "seconds": 0.08134058298310265
+    }
+  ],
+  "error": null,
+  "scope": "External regression; separate from the 95-case SQL suite"
+}

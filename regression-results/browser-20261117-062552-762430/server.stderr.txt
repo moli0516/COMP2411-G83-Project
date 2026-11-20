@@ -1,0 +1,23 @@
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:18080
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [17/Nov/2026 14:25:59] "GET /api/config HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:07] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:07] "GET /static/app.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:07] "GET /static/style.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:08] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [17/Nov/2026 14:26:08] "GET /api/config HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:08] "POST /api/query/Q01 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:08] "POST /api/query/Q02 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:09] "POST /api/query/Q03 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:09] "POST /api/query/Q04 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:09] "POST /api/query/Q05 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:09] "POST /api/query/Q06 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:09] "POST /api/query/Q07 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:10] "POST /api/query/Q08 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:11] "POST /api/connection HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:11] "[31m[1mPOST /api/operation/01_request_registration/preview HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:26:11] "POST /api/operation/01_request_registration/preview HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:12] "POST /api/operation/01_request_registration/preview HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:12] "POST /api/query/Q08 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:26:12] "POST /api/operation/01_request_registration/commit HTTP/1.1" 200 -

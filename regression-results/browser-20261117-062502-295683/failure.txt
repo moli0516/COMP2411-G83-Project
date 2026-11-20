@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/browser_smoke.py", line 16, in main
+    config = credentials(args, run)
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 81, in credentials
+    check(
+    ~~~~~^
+        len(args.database) <= 64
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        "Target must be comp2411_test or comp2411_test_<suffix>",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/moli/Documents/coding/COMP2411-Project/tools/regression/common.py", line 27, in check
+    raise AssertionError(message)
+AssertionError: Target must be comp2411_test or comp2411_test_<suffix>

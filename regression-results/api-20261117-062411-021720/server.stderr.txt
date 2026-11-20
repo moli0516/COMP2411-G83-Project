@@ -1,0 +1,37 @@
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:18080
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [17/Nov/2026 14:24:21] "GET /api/config HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/connection HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mPOST /api/connection HTTP/1.1[0m" 403 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mPOST /api/connection HTTP/1.1[0m" 403 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mGET /api/config HTTP/1.1[0m" 403 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mPOST /api/query/Q99 HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mPOST /api/table/not_a_table HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "[31m[1mPOST /api/operation/01_request_registration/commit HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q01 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q02 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q03 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q04 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q05 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q06 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q07 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/query/Q08 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/CorrectiveAction HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Customer HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Equipment HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Incident HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/IncidentCorrectiveAction HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Inspection HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/InspectionResult HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Quotation HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/RequestItem HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/ServiceJob HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/ServiceRequest HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:21] "POST /api/table/Staff HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "[31m[1mPOST /api/operation/01_request_registration/preview HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "POST /api/operation/01_request_registration/preview HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "POST /api/operation/01_request_registration/commit HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "[31m[1mPOST /api/operation/01_request_registration/commit HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "[31m[1mPOST /api/operation/07_issue_quotation/preview HTTP/1.1[0m" 400 -
+127.0.0.1 - - [17/Nov/2026 14:24:22] "POST /api/operation/07_issue_quotation/preview HTTP/1.1" 200 -
