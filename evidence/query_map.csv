@@ -1,9 +1,9 @@
 query_id,script,business_question,techniques,result_file
 Q01,queries/Q01.sql,MQ01 - First-round inspection failure counts and rates by component type,join;join3plus;group_by;null_handling,evidence/query_results/Q01.csv
-Q02,queries/Q02.sql,MQ01 - First-round inspection failure counts and rates by responsible technician,group_by,evidence/query_results/Q02.csv
-Q03,queries/Q03.sql,MQ03 - Overdue unverified corrective actions at 2026-10-31,filter,evidence/query_results/Q03.csv
+Q02,queries/Q02.sql,MQ01 - First-round inspection failure counts and rates by responsible technician,group_by;view,evidence/query_results/Q02.csv
+Q03,queries/Q03.sql,MQ03 - Overdue unverified corrective actions at 2026-10-31,view,evidence/query_results/Q03.csv
 Q04,queries/Q04.sql,MQ02 - Equipment received for repair more than once,join;join3plus;group_by;having,evidence/query_results/Q04.csv
 Q05,queries/Q05.sql,MQ03 - Overdue unverified actions exceeding the population average overdue duration,subquery,evidence/query_results/Q05.csv
-Q06,queries/Q06.sql,MQ03 - Medium- or high-severity incidents without corrective-action links,join;correlated;exists,evidence/query_results/Q06.csv
+Q06,queries/Q06.sql,MQ03 - Medium- or high-severity incidents without corrective-action links,join;subquery;correlated;exists,evidence/query_results/Q06.csv
 Q07,queries/Q07.sql,MQ04 - Unresolved corrective-action counts by technician including zero counts,join;group_by;null_handling,evidence/query_results/Q07.csv
-Q08,queries/Q08.sql,MQ02 - Open repeat-repair jobs with qualifying earlier criterion-level inspection failures,join;correlated;exists,evidence/query_results/Q08.csv
+Q08,queries/Q08.sql,MQ02 - Open repeat-repair jobs with qualifying earlier criterion-level inspection failures,join;subquery;correlated;exists;view,evidence/query_results/Q08.csv
