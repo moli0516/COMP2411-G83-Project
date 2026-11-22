@@ -1,6 +1,6 @@
 {
-  "group_id": "UNCONFIRMED_G083_OR_G084",
-  "canvas_group_name": "TODO_CONFIRM_CURRENT_CANVAS_GROUP_NAME",
+  "group_id": "G083",
+  "canvas_group_name": "Group 83, Nov 26, 15:06-15:11, TU101",
   "scenario_id": "D14-W08",
   "stage": 2,
   "team_size": 2,
@@ -16,6 +16,6 @@
   ],
   "dbms": "MySQL Community Server",
   "dbms_version": "8.4.11",
-  "database_name": "TODO_CONFIRM_DATABASE_NAME",
+  "database_name": "comp2411_test_marker",
   "approval_reference": null
 }
